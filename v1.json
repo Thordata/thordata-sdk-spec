@@ -1,102 +1,275 @@
 {
-  "version": 1,
-  "env": {
-    "tokens": {
-      "scraperToken": { "env": "THORDATA_SCRAPER_TOKEN", "required": true },
-      "publicToken": { "env": "THORDATA_PUBLIC_TOKEN", "required": false },
-      "publicKey": { "env": "THORDATA_PUBLIC_KEY", "required": false }
+  "endpoints": {
+    "locations": {
+      "asnPath": "/asn",
+      "citiesPath": "/cities",
+      "countriesPath": "/countries",
+      "statesPath": "/states"
     },
+    "serp": {
+      "builderPath": "/builder",
+      "requestPath": "/request"
+    },
+    "universal": {
+      "requestPath": "/request"
+    },
+    "webScraper": {
+      "downloadPath": "/tasks-download",
+      "statusPath": "/tasks-status"
+    }
+  },
+  "env": {
     "baseUrls": {
+      "locations": {
+        "default": "https://api.thordata.com/api/locations",
+        "env": "THORDATA_LOCATIONS_BASE_URL"
+      },
       "scraperapi": {
-        "env": "THORDATA_SCRAPERAPI_BASE_URL",
-        "default": "https://scraperapi.thordata.com"
+        "default": "https://scraperapi.thordata.com",
+        "env": "THORDATA_SCRAPERAPI_BASE_URL"
       },
       "universalapi": {
-        "env": "THORDATA_UNIVERSALAPI_BASE_URL",
-        "default": "https://universalapi.thordata.com"
+        "default": "https://universalapi.thordata.com",
+        "env": "THORDATA_UNIVERSALAPI_BASE_URL"
       },
       "webScraperApi": {
-        "env": "THORDATA_WEB_SCRAPER_API_BASE_URL",
-        "default": "https://api.thordata.com/api/web-scraper-api"
+        "default": "https://api.thordata.com/api/web-scraper-api",
+        "env": "THORDATA_WEB_SCRAPER_API_BASE_URL"
+      }
+    },
+    "tokens": {
+      "publicKey": {
+        "env": "THORDATA_PUBLIC_KEY",
+        "required": false
       },
-      "locations": {
-        "env": "THORDATA_LOCATIONS_BASE_URL",
-        "default": "https://api.thordata.com/api/locations"
+      "publicToken": {
+        "env": "THORDATA_PUBLIC_TOKEN",
+        "required": false
+      },
+      "scraperToken": {
+        "env": "THORDATA_SCRAPER_TOKEN",
+        "required": true
       }
     }
   },
-  "endpoints": {
-    "serp": { "requestPath": "/request", "builderPath": "/builder" },
-    "universal": { "requestPath": "/request" },
-    "webScraper": { "statusPath": "/tasks-status", "downloadPath": "/tasks-download" },
-    "locations": {
-      "countriesPath": "/countries",
-      "statesPath": "/states",
-      "citiesPath": "/cities",
-      "asnPath": "/asn"
+  "errors": {
+    "codes": {
+      "notCollected": {
+        "code": 300,
+        "retryable": true
+      }
+    },
+    "httpStatus": {
+      "auth": [
+        401,
+        403
+      ],
+      "rateLimit": [
+        402,
+        429
+      ],
+      "server": [
+        500,
+        502,
+        503,
+        504
+      ],
+      "validation": [
+        400,
+        422
+      ]
+    },
+    "payload": {
+      "codeField": "code",
+      "messageFieldCandidates": [
+        "msg",
+        "message",
+        "error",
+        "detail",
+        "description"
+      ],
+      "successCode": 200
+    },
+    "precedence": {
+      "effectiveCodeRule": "payload_code_if_present_and_not_200_else_http_status"
+    }
+  },
+  "network": {
+    "apiTraffic": {
+      "notes": [
+        "API calls may respect HTTP(S)_PROXY environment variables for users behind local proxies."
+      ],
+      "trustEnv": true
+    },
+    "chinaNotes": [
+      "In restricted networks, prefer system-level tunneling (e.g., TUN mode) or routing that allows reaching Thordata gateway hosts."
+    ],
+    "proxyGatewayTraffic": {
+      "notes": [
+        "Proxy gateway traffic may bypass environment proxies by design to avoid routing API calls through the proxy gateway."
+      ],
+      "trustEnv": false
     }
   },
   "proxy": {
-    "gateway": {
-      "defaultHost": "pr.thordata.net",
-      "dashboardHostPatterns": [
-        "{shard}.pr.thordata.net",
-        "{shard}.{region}.thordata.net"
-      ],
-      "regions": {
-        "common": ["na", "eu", "as"],
-        "residentialExtra": ["va"],
-        "defaultRegionAlias": "pr"
+    "auth": {
+      "passwordMayBeEmpty": true,
+      "usernamePrefix": "td-customer-"
+    },
+    "credentialsEnv": {
+      "datacenter": {
+        "password": "THORDATA_DATACENTER_PASSWORD",
+        "username": "THORDATA_DATACENTER_USERNAME"
       },
+      "isp": {
+        "host": "THORDATA_ISP_HOST",
+        "password": "THORDATA_ISP_PASSWORD",
+        "username": "THORDATA_ISP_USERNAME"
+      },
+      "mobile": {
+        "password": "THORDATA_MOBILE_PASSWORD",
+        "username": "THORDATA_MOBILE_USERNAME"
+      },
+      "residential": {
+        "password": "THORDATA_RESIDENTIAL_PASSWORD",
+        "username": "THORDATA_RESIDENTIAL_USERNAME"
+      }
+    },
+    "gateway": {
       "compatibilityHosts": [
         "pr.thordata.net",
         "t.pr.thordata.net",
         "dc.pr.thordata.net",
         "m.pr.thordata.net",
         "isp.pr.thordata.net"
-      ]
-    },
-    "auth": {
-      "usernamePrefix": "td-customer-",
-      "passwordMayBeEmpty": true
+      ],
+      "dashboardHostPatterns": [
+        "{shard}.pr.thordata.net",
+        "{shard}.{region}.thordata.net"
+      ],
+      "defaultHost": "pr.thordata.net",
+      "regions": {
+        "common": [
+          "na",
+          "eu",
+          "as"
+        ],
+        "defaultRegionAlias": "pr",
+        "residentialExtra": [
+          "va"
+        ]
+      }
     },
     "products": {
-      "residential": { "port": 9999 },
-      "mobile": { "port": 5555 },
-      "datacenter": { "port": 7777 },
-      "isp": { "port": 6666, "mode": "direct_or_gateway" }
+      "datacenter": {
+        "port": 7777
+      },
+      "isp": {
+        "mode": "direct_or_gateway",
+        "port": 6666
+      },
+      "mobile": {
+        "port": 5555
+      },
+      "residential": {
+        "port": 9999
+      }
     },
     "usernameSegments": {
-      "order": ["continent", "country", "state", "city", "asn", "sessid", "sesstime"],
       "keys": {
+        "asn": "asn",
+        "city": "city",
         "continent": "continent",
         "country": "country",
-        "state": "state",
-        "city": "city",
-        "asn": "asn",
+        "sessionDurationMinutes": "sesstime",
         "sessionId": "sessid",
-        "sessionDurationMinutes": "sesstime"
-      }
+        "state": "state"
+      },
+      "order": [
+        "continent",
+        "country",
+        "state",
+        "city",
+        "asn",
+        "sessid",
+        "sesstime"
+      ]
     }
   },
   "serp": {
     "mappings": {
       "searchTypeToTbm": {
         "images": "isch",
-        "shopping": "shop",
         "news": "nws",
-        "videos": "vid",
-        "isch": "isch",
-        "shop": "shop",
-        "nws": "nws",
-        "vid": "vid"
+        "shopping": "shop",
+        "videos": "vid"
       },
       "timeFilterToTbs": {
-        "hour": "qdr:h",
         "day": "qdr:d",
-        "week": "qdr:w",
+        "hour": "qdr:h",
         "month": "qdr:m",
+        "week": "qdr:w",
         "year": "qdr:y"
+      }
+    },
+    "request": {
+      "fields": {
+        "engine": {
+          "required": true,
+          "type": "string"
+        },
+        "gl": {
+          "type": "string"
+        },
+        "hl": {
+          "type": "string"
+        },
+        "json": {
+          "enum": [
+            "0",
+            "1"
+          ],
+          "meaning": "1=json,0=html",
+          "type": "string"
+        },
+        "no_cache": {
+          "enum": [
+            "True",
+            "False"
+          ],
+          "type": "string"
+        },
+        "num": {
+          "type": "string"
+        },
+        "q": {
+          "requiredIfEngineNot": [
+            "yandex"
+          ],
+          "type": "string"
+        },
+        "render_js": {
+          "enum": [
+            "True",
+            "False"
+          ],
+          "type": "string"
+        },
+        "start": {
+          "type": "string"
+        },
+        "tbm": {
+          "type": "string"
+        },
+        "tbs": {
+          "type": "string"
+        },
+        "text": {
+          "requiredIfEngine": [
+            "yandex"
+          ],
+          "type": "string"
+        }
       }
     }
   },
@@ -111,43 +284,17 @@
         "spider_universal"
       ]
     },
-    "status": { "requestFields": ["tasks_ids"] },
-    "download": { "requestFields": ["tasks_id", "type"] }
-  },
-  "errors": {
-    "payload": {
-      "successCode": 200,
-      "codeField": "code",
-      "messageFieldCandidates": ["msg", "message", "error", "detail", "description"]
+    "download": {
+      "requestFields": [
+        "tasks_id",
+        "type"
+      ]
     },
-    "precedence": {
-      "effectiveCodeRule": "payload_code_if_present_and_not_200_else_http_status"
-    },
-    "codes": {
-      "notCollected": { "code": 300, "retryable": true }
-    },
-    "httpStatus": {
-      "auth": [401, 403],
-      "rateLimit": [402, 429],
-      "server": [500, 502, 503, 504],
-      "validation": [400, 422]
+    "status": {
+      "requestFields": [
+        "tasks_ids"
+      ]
     }
   },
-  "network": {
-    "apiTraffic": {
-      "trustEnv": true,
-      "notes": [
-        "API calls may respect HTTP(S)_PROXY environment variables for users behind local proxies."
-      ]
-    },
-    "proxyGatewayTraffic": {
-      "trustEnv": false,
-      "notes": [
-        "Proxy gateway traffic may bypass environment proxies by design to avoid routing API calls through the proxy gateway."
-      ]
-    },
-    "chinaNotes": [
-      "In restricted networks, prefer system-level tunneling (e.g., TUN mode) or routing that allows reaching Thordata gateway hosts."
-    ]
-  }
+  "version": 1
 }
