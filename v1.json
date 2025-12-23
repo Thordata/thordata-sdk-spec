@@ -197,6 +197,14 @@
     }
   },
   "serp": {
+    "engines": {
+      "aliases": {
+        "bing_search": "bing",
+        "duckduckgo_search": "duckduckgo",
+        "google_search": "google",
+        "yandex_search": "yandex"
+      }
+    },
     "mappings": {
       "searchTypeToTbm": {
         "images": "isch",

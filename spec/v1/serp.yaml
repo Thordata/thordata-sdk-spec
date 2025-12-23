@@ -1,4 +1,11 @@
 # spec/v1/serp.yaml
+engines:
+  aliases:
+    google_search: google
+    bing_search: bing
+    yandex_search: yandex
+    duckduckgo_search: duckduckgo
+
 request:
   fields:
     engine: { type: "string", required: true }
