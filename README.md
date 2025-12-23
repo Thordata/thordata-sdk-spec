@@ -10,6 +10,8 @@ This repository defines the canonical defaults and parameter conventions for:
 - Error code handling precedence and mappings
 - Network/proxy behavior notes (especially for restricted networks)
 
+Any change to v1.json requires bumping sdk-spec submodule in all SDK repos (or explicitly postponing the bump).
+
 ## Files
 
 ### `v1.json` (Canonical artifact)
