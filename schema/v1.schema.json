@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["version", "env", "endpoints", "proxy", "serp", "tasks", "errors", "network"],
+  "properties": {
+    "version": { "type": "integer" },
+    "env": { "type": "object" },
+    "endpoints": { "type": "object" },
+    "proxy": { "type": "object" },
+    "serp": { "type": "object" },
+    "tasks": { "type": "object" },
+    "errors": { "type": "object" },
+    "network": { "type": "object" }
+  },
+  "additionalProperties": true
+}

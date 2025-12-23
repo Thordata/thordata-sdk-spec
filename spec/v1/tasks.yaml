@@ -1,22 +1,17 @@
-createTask:
-  requiredPublicCreds: false
-  request:
-    fields:
-      fileName: {type: string}
-      spiderId: {type: string}
-      spiderName: {type: string}
-      parameters: {type: object}
-      universalParams: {type: object, optional: true}
+builder:
+  requestFields:
+    - file_name
+    - spider_id
+    - spider_name
+    - spider_parameters
+    - spider_errors
+    - spider_universal
 
-taskStatus:
-  requiredPublicCreds: true
-  request:
-    fields:
-      tasks_ids: {type: string}
+status:
+  requestFields:
+    - tasks_ids
 
-taskDownload:
-  requiredPublicCreds: true
-  request:
-    fields:
-      tasks_id: {type: string}
-      type: {type: string, default: "json"}
+download:
+  requestFields:
+    - tasks_id
+    - type

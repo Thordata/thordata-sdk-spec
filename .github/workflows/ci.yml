@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: python -m pip install -r tools/requirements.txt
+
+      - name: Build generated spec
+        run: python tools/build_v1_json.py --out v1.generated.json
+
+      - name: Validate generated spec
+        run: python tools/validate_v1_json.py --spec v1.generated.json --schema schema/v1.schema.json
+
+      - name: Ensure v1.json is in sync with YAML sources
+        run: python tools/check_in_sync.py --generated v1.generated.json --canonical v1.json

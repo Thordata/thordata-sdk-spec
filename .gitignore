@@ -1,0 +1,4 @@
+v1.generated.json
+.venv/
+__pycache__/
+*.pyc
