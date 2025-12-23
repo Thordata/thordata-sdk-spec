@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "env": {
+    "tokens": {
+      "scraperToken": { "env": "THORDATA_SCRAPER_TOKEN", "required": true },
+      "publicToken": { "env": "THORDATA_PUBLIC_TOKEN", "required": false },
+      "publicKey": { "env": "THORDATA_PUBLIC_KEY", "required": false }
+    },
+    "baseUrls": {
+      "scraperapi": {
+        "env": "THORDATA_SCRAPERAPI_BASE_URL",
+        "default": "https://scraperapi.thordata.com"
+      },
+      "universalapi": {
+        "env": "THORDATA_UNIVERSALAPI_BASE_URL",
+        "default": "https://universalapi.thordata.com"
+      },
+      "webScraperApi": {
+        "env": "THORDATA_WEB_SCRAPER_API_BASE_URL",
+        "default": "https://api.thordata.com/api/web-scraper-api"
+      },
+      "locations": {
+        "env": "THORDATA_LOCATIONS_BASE_URL",
+        "default": "https://api.thordata.com/api/locations"
+      }
+    }
+  },
+  "endpoints": {
+    "serp": { "requestPath": "/request", "builderPath": "/builder" },
+    "universal": { "requestPath": "/request" },
+    "webScraper": { "statusPath": "/tasks-status", "downloadPath": "/tasks-download" },
+    "locations": {
+      "countriesPath": "/countries",
+      "statesPath": "/states",
+      "citiesPath": "/cities",
+      "asnPath": "/asn"
+    }
+  },
+  "proxy": {
+    "gateway": {
+      "defaultHost": "pr.thordata.net",
+      "dashboardHostPatterns": [
+        "{shard}.pr.thordata.net",
+        "{shard}.{region}.thordata.net"
+      ],
+      "regions": {
+        "common": ["na", "eu", "as"],
+        "residentialExtra": ["va"],
+        "defaultRegionAlias": "pr"
+      },
+      "compatibilityHosts": [
+        "pr.thordata.net",
+        "t.pr.thordata.net",
+        "dc.pr.thordata.net",
+        "m.pr.thordata.net",
+        "isp.pr.thordata.net"
+      ]
+    },
+    "auth": {
+      "usernamePrefix": "td-customer-",
+      "passwordMayBeEmpty": true
+    },
+    "products": {
+      "residential": { "port": 9999 },
+      "mobile": { "port": 5555 },
+      "datacenter": { "port": 7777 },
+      "isp": { "port": 6666, "mode": "direct_or_gateway" }
+    },
+    "usernameSegments": {
+      "order": ["continent", "country", "state", "city", "asn", "sessid", "sesstime"],
+      "keys": {
+        "continent": "continent",
+        "country": "country",
+        "state": "state",
+        "city": "city",
+        "asn": "asn",
+        "sessionId": "sessid",
+        "sessionDurationMinutes": "sesstime"
+      }
+    }
+  },
+  "serp": {
+    "mappings": {
+      "searchTypeToTbm": {
+        "images": "isch",
+        "shopping": "shop",
+        "news": "nws",
+        "videos": "vid",
+        "isch": "isch",
+        "shop": "shop",
+        "nws": "nws",
+        "vid": "vid"
+      },
+      "timeFilterToTbs": {
+        "hour": "qdr:h",
+        "day": "qdr:d",
+        "week": "qdr:w",
+        "month": "qdr:m",
+        "year": "qdr:y"
+      }
+    }
+  },
+  "tasks": {
+    "builder": {
+      "requestFields": [
+        "file_name",
+        "spider_id",
+        "spider_name",
+        "spider_parameters",
+        "spider_errors",
+        "spider_universal"
+      ]
+    },
+    "status": { "requestFields": ["tasks_ids"] },
+    "download": { "requestFields": ["tasks_id", "type"] }
+  },
+  "errors": {
+    "payload": {
+      "successCode": 200,
+      "codeField": "code",
+      "messageFieldCandidates": ["msg", "message", "error", "detail", "description"]
+    },
+    "precedence": {
+      "effectiveCodeRule": "payload_code_if_present_and_not_200_else_http_status"
+    },
+    "codes": {
+      "notCollected": { "code": 300, "retryable": true }
+    },
+    "httpStatus": {
+      "auth": [401, 403],
+      "rateLimit": [402, 429],
+      "server": [500, 502, 503, 504],
+      "validation": [400, 422]
+    }
+  },
+  "network": {
+    "apiTraffic": {
+      "trustEnv": true,
+      "notes": [
+        "API calls may respect HTTP(S)_PROXY environment variables for users behind local proxies."
+      ]
+    },
+    "proxyGatewayTraffic": {
+      "trustEnv": false,
+      "notes": [
+        "Proxy gateway traffic may bypass environment proxies by design to avoid routing API calls through the proxy gateway."
+      ]
+    },
+    "chinaNotes": [
+      "In restricted networks, prefer system-level tunneling (e.g., TUN mode) or routing that allows reaching Thordata gateway hosts."
+    ]
+  }
+}

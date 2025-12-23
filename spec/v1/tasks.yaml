@@ -1,0 +1,22 @@
+createTask:
+  requiredPublicCreds: false          # 你现在 create 用 scraper_token
+  request:
+    fields:
+      fileName: {type: string}
+      spiderId: {type: string}
+      spiderName: {type: string}
+      parameters: {type: object}
+      universalParams: {type: object, optional: true}
+
+taskStatus:
+  requiredPublicCreds: true
+  request:
+    fields:
+      tasks_ids: {type: string}       # 你现在就是 tasks_ids
+
+taskDownload:
+  requiredPublicCreds: true
+  request:
+    fields:
+      tasks_id: {type: string}
+      type: {type: string, default: "json"}

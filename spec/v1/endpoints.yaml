@@ -1,0 +1,16 @@
+serp:
+  requestPath: "/request"
+  builderPath: "/builder"
+
+universal:
+  requestPath: "/request"
+
+webScraper:
+  statusPath: "/tasks-status"
+  downloadPath: "/tasks-download"
+
+locations:
+  countriesPath: "/countries"
+  statesPath: "/states"
+  citiesPath: "/cities"
+  asnPath: "/asn"

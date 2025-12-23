@@ -1,0 +1,12 @@
+apiTraffic:
+  trustEnv: true
+  notes:
+    - "API calls may respect HTTP(S)_PROXY environment variables for users behind local proxies."
+
+proxyGatewayTraffic:
+  trustEnv: false
+  notes:
+    - "Proxy gateway traffic may bypass environment proxies by design to avoid routing API calls through the proxy gateway."
+
+chinaNotes:
+  - "In restricted networks, prefer system-level tunneling (e.g., TUN mode) or routing that allows reaching Thordata gateway hosts."

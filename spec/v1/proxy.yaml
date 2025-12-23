@@ -1,0 +1,63 @@
+# spec/v1/proxy.yaml
+gateway:
+  # SDK 层面应该允许用户显式传入 host；默认值只是“兜底”
+  defaultHost: "pr.thordata.net"
+
+  # Dashboard 会给“账号专属”的 host（强烈建议用户用它）
+  dashboardHostPatterns:
+    - "{shard}.pr.thordata.net"
+    - "{shard}.{region}.thordata.net"
+
+  # region 列表（根据你 dashboard 的观察）
+  regions:
+    common: ["na", "eu", "as"]     # 多产品都有
+    residentialExtra: ["va"]       # 住宅独有（你的观察）
+    defaultRegionAlias: "pr"       # 你 dashboard 里存在 {shard}.pr.thordata.net
+
+  # SDK 里历史/兼容 host（你当前代码里用到的）
+  compatibilityHosts:
+    - "pr.thordata.net"
+    - "t.pr.thordata.net"
+    - "dc.pr.thordata.net"
+    - "m.pr.thordata.net"
+    - "isp.pr.thordata.net"
+
+auth:
+  usernamePrefix: "td-customer-"
+  # 你的 client 默认 password 为空，但 dashboard 输出是有 password 的
+  # 所以这里不把空密码当作规范，只当“兼容”
+  passwordMayBeEmpty: true
+
+products:
+  residential: { port: 9999 }
+  mobile:      { port: 5555 }
+  datacenter:  { port: 7777 }
+  isp:         { port: 6666, mode: "direct_or_gateway" }  # 你 Python 里 StaticISPProxy 是 direct
+
+credentialsEnv:
+  residential: { username: "THORDATA_RESIDENTIAL_USERNAME", password: "THORDATA_RESIDENTIAL_PASSWORD" }
+  mobile:      { username: "THORDATA_MOBILE_USERNAME",      password: "THORDATA_MOBILE_PASSWORD" }
+  datacenter:  { username: "THORDATA_DATACENTER_USERNAME",  password: "THORDATA_DATACENTER_PASSWORD" }
+  isp:
+    host:      "THORDATA_ISP_HOST"
+    username:  "THORDATA_ISP_USERNAME"
+    password:  "THORDATA_ISP_PASSWORD"
+
+# username 拼装规则（以 Python ProxyConfig.build_username / JS Proxy.buildUsername 为准）
+usernameSegments:
+  order:
+    - "continent"   # python 支持，js 当前不支持
+    - "country"
+    - "state"       # python 支持，js 当前不支持（js 用 region 字段但没落地）
+    - "city"
+    - "asn"         # python 支持，js 当前不支持
+    - "sessid"
+    - "sesstime"
+  keys:
+    continent: "continent"
+    country: "country"
+    state: "state"
+    city: "city"
+    asn: "asn"
+    sessionId: "sessid"
+    sessionDurationMinutes: "sesstime"

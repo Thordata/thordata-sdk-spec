@@ -1,0 +1,16 @@
+payload:
+  successCode: 200
+  codeField: "code"
+  messageFieldCandidates: ["msg", "message", "error", "detail", "description"]
+
+precedence:
+  # 当 payload code 存在且 != 200 时，用 payload code 做分类
+  effectiveCodeRule: "payload_code_if_present_and_not_200_else_http_status"
+
+codes:
+  notCollected: { code: 300, retryable: true }
+httpStatus:
+  auth:      [401, 403]
+  rateLimit: [402, 429]
+  server:    [500, 502, 503, 504]
+  validation: [400, 422]
