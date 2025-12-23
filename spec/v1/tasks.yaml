@@ -1,5 +1,5 @@
 createTask:
-  requiredPublicCreds: false          # 你现在 create 用 scraper_token
+  requiredPublicCreds: false
   request:
     fields:
       fileName: {type: string}
@@ -12,7 +12,7 @@ taskStatus:
   requiredPublicCreds: true
   request:
     fields:
-      tasks_ids: {type: string}       # 你现在就是 tasks_ids
+      tasks_ids: {type: string}
 
 taskDownload:
   requiredPublicCreds: true
