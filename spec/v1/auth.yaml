@@ -1,0 +1,43 @@
+# spec/v1/auth.yaml
+# This file defines which credentials must be used for each API family.
+# It resolves the "token" naming ambiguity across docs:
+# - SERP/Universal use the Account Settings token (scraper token).
+# - Public APIs (Locations, task status/download/list) use My Account token/key.
+# - Web Scraper builder requires BOTH: public token/key + scraper Authorization.
+
+auth:
+  serp:
+    headers:
+      token: scraperToken
+    optionalHeaders:
+      AuthorizationBearer: scraperToken
+
+  universal:
+    headers:
+      token: scraperToken
+    optionalHeaders:
+      AuthorizationBearer: scraperToken
+
+  webScraper:
+    builder:
+      headers:
+        token: publicToken
+        key: publicKey
+        AuthorizationBearer: scraperToken
+    status:
+      headers:
+        token: publicToken
+        key: publicKey
+    download:
+      headers:
+        token: publicToken
+        key: publicKey
+    list:
+      headers:
+        token: publicToken
+        key: publicKey
+
+  locations:
+    query:
+      token: publicToken
+      key: publicKey
