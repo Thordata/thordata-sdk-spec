@@ -1,4 +1,57 @@
 {
+  "auth": {
+    "auth": {
+      "locations": {
+        "query": {
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "serp": {
+        "headers": {
+          "token": "scraperToken"
+        },
+        "optionalHeaders": {
+          "AuthorizationBearer": "scraperToken"
+        }
+      },
+      "universal": {
+        "headers": {
+          "token": "scraperToken"
+        },
+        "optionalHeaders": {
+          "AuthorizationBearer": "scraperToken"
+        }
+      },
+      "webScraper": {
+        "builder": {
+          "headers": {
+            "AuthorizationBearer": "scraperToken",
+            "key": "publicKey",
+            "token": "publicToken"
+          }
+        },
+        "download": {
+          "headers": {
+            "key": "publicKey",
+            "token": "publicToken"
+          }
+        },
+        "list": {
+          "headers": {
+            "key": "publicKey",
+            "token": "publicToken"
+          }
+        },
+        "status": {
+          "headers": {
+            "key": "publicKey",
+            "token": "publicToken"
+          }
+        }
+      }
+    }
+  },
   "endpoints": {
     "locations": {
       "asnPath": "/asn",
@@ -21,7 +74,7 @@
   "env": {
     "baseUrls": {
       "locations": {
-        "default": "https://api.thordata.com/api/locations",
+        "default": "https://openapi.thordata.com/api/locations",
         "env": "THORDATA_LOCATIONS_BASE_URL"
       },
       "scraperapi": {
@@ -33,7 +86,7 @@
         "env": "THORDATA_UNIVERSALAPI_BASE_URL"
       },
       "webScraperApi": {
-        "default": "https://api.thordata.com/api/web-scraper-api",
+        "default": "https://openapi.thordata.com/api/web-scraper-api",
         "env": "THORDATA_WEB_SCRAPER_API_BASE_URL"
       }
     },

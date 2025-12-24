@@ -33,6 +33,7 @@ def main() -> None:
     out: dict = {"version": version}
 
     for key, filename in [
+        ("auth", "auth.yaml"),  # Auth rules across API families (token/key/Authorization)
         ("env", "env.yaml"),
         ("endpoints", "endpoints.yaml"),
         ("proxy", "proxy.yaml"),
