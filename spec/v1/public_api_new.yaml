@@ -1,0 +1,120 @@
+# spec/v1/public_api_new.yaml
+# Public API NEW - uses sign + apiKey authentication
+# This is a SEPARATE authentication system from token+key
+
+auth:
+  description: "Public API NEW uses sign + apiKey headers"
+  headers:
+    sign:
+      description: "Immutable sign value from Dashboard"
+      envVar: "THORDATA_SIGN"
+    apiKey:
+      description: "API key (can be changed in Dashboard)"
+      envVar: "THORDATA_API_KEY"
+
+baseUrl: "https://api.thordata.com/api"
+
+# Residential proxy APIs
+residential:
+  getBalance:
+    endpoint: "/gateway/getFlowBalance"
+    method: "POST"
+    description: "Get residential proxy balance"
+    responseFields:
+      balance:
+        type: "integer"
+        unit: "bytes"
+      expire_time:
+        type: "integer"
+        description: "Unix timestamp"
+
+  getUsage:
+    endpoint: "/gateway/usageRecord"
+    method: "POST"
+    requestFields:
+      start_time:
+        type: "string"
+        description: "Unix timestamp or YYYY-MM-DD HH:MM:SS"
+      end_time:
+        type: "string"
+        description: "Unix timestamp or YYYY-MM-DD HH:MM:SS"
+    responseFields:
+      all_flow: "integer"
+      all_used_flow: "integer"
+      balance: "integer"
+      data: "array"
+
+  userList:
+    endpoint: "/child/user_list"
+    method: "GET"
+    responseFields:
+      list:
+        type: "array"
+        items:
+          username: "string"
+          password: "string"
+          flow_limit: "integer"
+          status:
+            type: "integer"
+            description: "1=enabled, -2=disabled"
+
+  editUser:
+    endpoint: "/child/edit_user"
+    method: "GET"
+    params:
+      - sign
+      - apiKey
+      - username
+      - new_password
+      - new_flow_limit
+      - new_status
+
+  deleteUser:
+    endpoint: "/child/del_user"
+    method: "GET"
+    params:
+      - sign
+      - apiKey
+      - username
+
+# ISP proxy APIs
+isp:
+  getRegions:
+    endpoint: "/gateway/getRegionIsp"
+    method: "POST"
+    description: "Get available ISP proxy regions"
+    responseFields:
+      - id
+      - continent
+      - country
+      - city
+      - num
+      - pricing
+
+  listProxies:
+    endpoint: "/gateway/queryListIsp"
+    method: "POST"
+    description: "List ISP proxies"
+    responseFields:
+      - ip
+      - port
+      - user
+      - pwd
+      - startTime
+      - expireTime
+
+  getExpiration:
+    endpoint: "/gateway/queryTimeIsp"
+    method: "POST"
+    requestFields:
+      ips:
+        type: "string"
+        description: "Comma-separated IP list"
+    responseFields:
+      expire_time: "integer"
+
+  getWalletBalance:
+    endpoint: "/gateway/getBalance"
+    method: "POST"
+    responseFields:
+      walletBalance: "number"

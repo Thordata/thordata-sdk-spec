@@ -1,42 +1,142 @@
 # spec/v1/auth.yaml
-# This file defines which credentials must be used for each API family.
-# It resolves the "token" naming ambiguity across docs:
-# - SERP/Universal use the Account Settings token (scraper token).
-# - Public APIs (Locations, task status/download/list) use My Account token/key.
-# - Web Scraper builder requires BOTH: public token/key + scraper Authorization.
+# Authentication modes and credential requirements for all Thordata APIs
 
-serp:
-  headers:
-    token: scraperToken
-  optionalHeaders:
-    AuthorizationBearer: scraperToken
+# Token/credential sources
+credentials:
+  scraperToken:
+    envVar: "THORDATA_SCRAPER_TOKEN"
+    source: "Dashboard -> Account Settings"
+    required: true
+    usedBy: ["serp", "universal", "builder"]
 
-universal:
-  headers:
-    token: scraperToken
-  optionalHeaders:
-    AuthorizationBearer: scraperToken
+  publicToken:
+    envVar: "THORDATA_PUBLIC_TOKEN"
+    source: "Dashboard -> My Account"
+    required: false
+    usedBy: ["publicApi", "locations", "tasks"]
 
-webScraper:
+  publicKey:
+    envVar: "THORDATA_PUBLIC_KEY"
+    source: "Dashboard -> My Account"
+    required: false
+    usedBy: ["publicApi", "locations", "tasks"]
+
+  sign:
+    envVar: "THORDATA_SIGN"
+    source: "Dashboard -> Public API NEW"
+    required: false
+    immutable: true
+    usedBy: ["publicApiNew"]
+
+  apiKey:
+    envVar: "THORDATA_API_KEY"
+    source: "Dashboard -> Public API NEW"
+    required: false
+    mutable: true
+    usedBy: ["publicApiNew"]
+
+# Authentication modes for SERP/Universal
+serpUniversalAuth:
+  modes:
+    bearer:
+      header: "Authorization"
+      format: "Bearer {scraperToken}"
+      documentation: "Thordata Docs examples"
+      default: true
+    headerToken:
+      header: "token"
+      format: "{scraperToken}"
+      documentation: "Interface documentation"
+      default: false
+
+# API family authentication requirements
+apiAuth:
+  serp:
+    required: ["scraperToken"]
+    mode: "bearer or headerToken"
+    headers:
+      bearer: { Authorization: "Bearer {scraperToken}" }
+      headerToken: { token: "{scraperToken}" }
+
+  universal:
+    required: ["scraperToken"]
+    mode: "bearer or headerToken"
+    headers:
+      bearer: { Authorization: "Bearer {scraperToken}" }
+      headerToken: { token: "{scraperToken}" }
+
   builder:
+    required: ["scraperToken", "publicToken", "publicKey"]
+    note: "Requires ALL THREE headers"
     headers:
-      token: publicToken
-      key: publicKey
-      AuthorizationBearer: scraperToken
-  status:
-    headers:
-      token: publicToken
-      key: publicKey
-  download:
-    headers:
-      token: publicToken
-      key: publicKey
-  list:
-    headers:
-      token: publicToken
-      key: publicKey
+      token: "{publicToken}"
+      key: "{publicKey}"
+      Authorization: "Bearer {scraperToken}"
 
-locations:
-  query:
-    token: publicToken
-    key: publicKey
+  videoBuilder:
+    required: ["scraperToken", "publicToken", "publicKey"]
+    note: "Same as builder"
+    headers:
+      token: "{publicToken}"
+      key: "{publicKey}"
+      Authorization: "Bearer {scraperToken}"
+
+  tasksStatus:
+    required: ["publicToken", "publicKey"]
+    headers:
+      token: "{publicToken}"
+      key: "{publicKey}"
+
+  tasksDownload:
+    required: ["publicToken", "publicKey"]
+    headers:
+      token: "{publicToken}"
+      key: "{publicKey}"
+
+  tasksList:
+    required: ["publicToken", "publicKey"]
+    headers:
+      token: "{publicToken}"
+      key: "{publicKey}"
+
+  locations:
+    required: ["publicToken", "publicKey"]
+    method: "query params"
+    params:
+      token: "{publicToken}"
+      key: "{publicKey}"
+
+  publicApi:
+    required: ["publicToken", "publicKey"]
+    note: "Account management, proxy users, whitelist"
+    headers:
+      token: "{publicToken}"
+      key: "{publicKey}"
+
+  publicApiNew:
+    required: ["sign", "apiKey"]
+    note: "Separate authentication system"
+    headers:
+      sign: "{sign}"
+      apiKey: "{apiKey}"
+
+# Decision tree for SDK implementers
+decisionTree:
+  question: "Which API are you calling?"
+  answers:
+    "SERP or Universal":
+      useCredential: "scraperToken"
+      authMode: "bearer (default) or headerToken"
+    "Web Scraper builder/video_builder":
+      useCredential: ["scraperToken", "publicToken", "publicKey"]
+      note: "Need all three"
+    "Task status/download/list":
+      useCredential: ["publicToken", "publicKey"]
+    "Locations API":
+      useCredential: ["publicToken", "publicKey"]
+      method: "query params"
+    "Account management (usage, users, whitelist, proxy list)":
+      useCredential: ["publicToken", "publicKey"]
+    "Public API NEW (balance, ISP regions)":
+      useCredential: ["sign", "apiKey"]
+      note: "Different auth system"

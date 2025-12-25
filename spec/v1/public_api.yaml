@@ -1,0 +1,132 @@
+# spec/v1/public_api.yaml
+# Public API endpoints for account/proxy management (token + key auth)
+
+auth:
+  headers:
+    token: "publicToken"
+    key: "publicKey"
+
+# Account usage statistics
+usageStatistics:
+  endpoint: "/account/usage-statistics"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "GET"
+  params:
+    - token
+    - key
+    - from_date
+    - to_date
+  responseFields:
+    total_usage_traffic:
+      type: "number"
+      unit: "KB"
+    traffic_balance:
+      type: "number"
+      unit: "KB"
+    query_days:
+      type: "integer"
+    range_usage_traffic:
+      type: "number"
+      unit: "KB"
+    data:
+      type: "array"
+      description: "Daily usage breakdown"
+
+# Proxy user management
+proxyUsers:
+  list:
+    endpoint: "/proxy-users/user-list"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+      - proxy_type
+    proxyTypes:
+      1: "Residential"
+      2: "Unlimited"
+    responseFields:
+      limit:
+        type: "number"
+        unit: "KB"
+      remaining_limit:
+        type: "number"
+        unit: "KB"
+      user_count:
+        type: "integer"
+      list:
+        type: "array"
+        items:
+          username: "string"
+          password: "string"
+          status: "boolean"
+          traffic_limit: "integer"
+          usage_traffic: "number"
+
+  create:
+    endpoint: "/proxy-users/create-user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      proxy_type:
+        type: "integer"
+        required: true
+      username:
+        type: "string"
+        required: true
+      password:
+        type: "string"
+        required: true
+      traffic_limit:
+        type: "integer"
+        description: "Traffic limit in MB (0 = unlimited, min 100)"
+      status:
+        type: "string"
+        enum: ["true", "false"]
+
+# Whitelist IP management
+whitelist:
+  addIp:
+    endpoint: "/whitelisted-ips/add-ip"
+    baseUrl: "https://api.thordata.com/api"
+    method: "POST"
+    requestFields:
+      proxy_type:
+        type: "integer"
+        description: "1=Residential, 2=Unlimited, 9=Mobile"
+      ip:
+        type: "string"
+        required: true
+      status:
+        type: "string"
+        enum: ["true", "false"]
+
+# ISP/Datacenter proxy list
+proxyList:
+  endpoint: "/proxy/proxy-list"
+  baseUrl: "https://api.thordata.com/api"
+  method: "GET"
+  params:
+    - token
+    - key
+    - proxy_type
+  proxyTypes:
+    1: "ISP"
+    2: "Datacenter"
+  responseFields:
+    - ip
+    - port
+    - username
+    - password
+    - expiration_time
+
+# Proxy expiration time
+proxyExpiration:
+  endpoint: "/proxy/expiration-time"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "GET"
+  params:
+    - token
+    - key
+    - proxy_type
+    - ips

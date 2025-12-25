@@ -33,14 +33,18 @@ def main() -> None:
     out: dict = {"version": version}
 
     for key, filename in [
-        ("auth", "auth.yaml"),  # Auth rules across API families (token/key/Authorization)
+        ("auth", "auth.yaml"),
         ("env", "env.yaml"),
         ("endpoints", "endpoints.yaml"),
         ("proxy", "proxy.yaml"),
         ("serp", "serp.yaml"),
+        ("universal", "universal.yaml"),
         ("tasks", "tasks.yaml"),
+        ("publicApi", "public_api.yaml"),        # 新增
+        ("publicApiNew", "public_api_new.yaml"), # 新增
         ("errors", "errors.yaml"),
         ("network", "network.yaml"),
+        ("locations", "locations.yaml"),
     ]:
         data = load_yaml(v1_dir / filename)
         if data is None:
@@ -52,6 +56,7 @@ def main() -> None:
         json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    print(f"Generated: {out_path}")
 
 
 if __name__ == "__main__":

@@ -1,19 +1,77 @@
+# spec/v1/errors.yaml
+# Error code definitions for all Thordata APIs
+
+# Response payload structure
 payload:
   successCode: 200
   codeField: "code"
   messageFieldCandidates: ["msg", "message", "error", "detail", "description"]
 
+# Error precedence rule
 precedence:
-  # When payload code exists and != 200, use payload code for classification
   effectiveCodeRule: "payload_code_if_present_and_not_200_else_http_status"
 
-codes:
-  notCollected: { code: 300, retryable: true }
+# API-specific codes (in response payload, NOT HTTP status)
+apiCodes:
+  notCollected:
+    code: 300
+    retryable: true
+    description: "Request accepted but no data collected (not billed)"
 
-# SERP API codes: 200, 300, 400, 401, 403, 404, 429, 500, 504
-# Web Unlocker codes: 200, 300, 400, 401, 429, 500, 504
+# HTTP status code categories
 httpStatus:
-  auth:      [401, 403]
+  auth: [401, 403]
   rateLimit: [402, 429]
-  server:    [500, 502, 503, 504]
+  server: [500, 502, 503, 504]
   validation: [400, 404, 422]
+
+# SERP API response codes
+serpCodes:
+  - 200  # Success
+  - 300  # Not collected
+  - 400  # Bad request
+  - 401  # Unauthorized
+  - 403  # Forbidden
+  - 404  # Not found
+  - 429  # Rate limit
+  - 500  # Server error
+  - 504  # Timeout
+
+# Universal API response codes
+universalCodes:
+  - 200
+  - 300
+  - 400
+  - 401
+  - 429
+  - 500
+  - 504
+
+# Public API error codes (10000 series)
+publicApiCodes:
+  10000:
+    message: "Parameter error"
+    retryable: false
+  10001:
+    message: "Unknown error"
+    retryable: false
+  10011:
+    message: "Frequent operations, please try again later"
+    retryable: true
+    suggestedAction: "exponential_backoff"
+  10013:
+    message: "sign error"
+    retryable: false
+    category: "auth"
+  10014:
+    message: "apiKey error"
+    retryable: false
+    category: "auth"
+  10018:
+    message: "The username already exists"
+    retryable: false
+    category: "validation"
+  10021:
+    message: "The query date cannot exceed 180 days"
+    retryable: false
+    category: "validation"

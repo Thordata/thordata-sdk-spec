@@ -1,4 +1,16 @@
+# spec/v1/tasks.yaml
+# Web Scraper API task definitions
+
+# Text-based scraping task (existing)
 builder:
+  endpoint: "/builder"
+  baseUrl: "https://scraperapi.thordata.com"
+  method: "POST"
+  auth:
+    headers:
+      token: "publicToken"
+      key: "publicKey"
+      AuthorizationBearer: "scraperToken"
   requestFields:
     - file_name
     - spider_id
@@ -7,11 +19,133 @@ builder:
     - spider_errors
     - spider_universal
 
+# YouTube video/audio download task
+videoBuilder:
+  endpoint: "/video_builder"
+  baseUrl: "https://scraperapi.thordata.com"
+  method: "POST"
+  auth:
+    headers:
+      token: "publicToken"
+      key: "publicKey"
+      AuthorizationBearer: "scraperToken"
+  requestFields:
+    - file_name
+    - spider_id
+    - spider_name
+    - spider_parameters
+    - spider_errors
+    - common_settings
+  commonSettings:
+    description: "YouTube video/audio common settings (JSON string)"
+    fields:
+      resolution:
+        type: "string"
+        enum: ["360p", "480p", "720p", "1080p", "1440p", "2160p"]
+        description: "Video resolution (optional, auto-downgrades if unavailable)"
+      audio_format:
+        type: "string"
+        enum: ["opus", "mp3"]
+        description: "Audio format (required for audio spider)"
+      bitrate:
+        type: "string"
+        description: "Audio bitrate (48/64/128/160/256/320 or with Kbps suffix)"
+      is_subtitles:
+        type: "string"
+        enum: ["true", "false"]
+        description: "Download subtitles (required)"
+      subtitles_language:
+        type: "string"
+        description: "Subtitle language code (e.g., 'en', 'zh-Hans')"
+
+# Task list query
+list:
+  endpoint: "/tasks-list"
+  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  method: "POST"
+  auth:
+    headers:
+      token: "publicToken"
+      key: "publicKey"
+  requestFields:
+    - page
+    - size
+  responseFields:
+    - count
+    - list
+
+# Task status query
 status:
+  endpoint: "/tasks-status"
+  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  method: "POST"
+  auth:
+    headers:
+      token: "publicToken"
+      key: "publicKey"
   requestFields:
     - tasks_ids
 
+# Task download
 download:
+  endpoint: "/tasks-download"
+  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  method: "POST"
+  auth:
+    headers:
+      token: "publicToken"
+      key: "publicKey"
   requestFields:
     - tasks_id
     - type
+  downloadTypes:
+    - json
+    - csv
+    - video
+    - subtitle
+    - audio
+
+# Webhook payload definition
+webhook:
+  description: "Webhook events sent by Thordata when task status changes"
+  events:
+    - Running
+    - Task Succeeded
+    - Task Failed
+  payload:
+    taskId:
+      type: "string"
+      description: "Task ID"
+    prodect_id:
+      type: "string"
+      description: "Product ID"
+    apiCode:
+      type: "integer"
+      description: "API response code"
+    apiErrorMsg:
+      type: "string"
+      description: "Error message if any"
+    jsonUrl:
+      type: "string"
+      description: "JSON result download URL"
+    csvUrl:
+      type: "string"
+      description: "CSV result download URL"
+    videoUrl:
+      type: "string"
+      description: "Video download URL (for video tasks)"
+    audioUrl:
+      type: "string"
+      description: "Audio download URL (for audio tasks)"
+    subtitleUrl:
+      type: "string"
+      description: "Subtitle download URL"
+    status:
+      type: "string"
+      description: "Task status"
+    createdTime:
+      type: "string"
+      description: "Task creation time"
+    endTime:
+      type: "string"
+      description: "Task completion time"

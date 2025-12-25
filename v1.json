@@ -1,51 +1,230 @@
 {
   "auth": {
-    "locations": {
-      "query": {
-        "key": "publicKey",
-        "token": "publicToken"
-      }
-    },
-    "serp": {
-      "headers": {
-        "token": "scraperToken"
-      },
-      "optionalHeaders": {
-        "AuthorizationBearer": "scraperToken"
-      }
-    },
-    "universal": {
-      "headers": {
-        "token": "scraperToken"
-      },
-      "optionalHeaders": {
-        "AuthorizationBearer": "scraperToken"
-      }
-    },
-    "webScraper": {
+    "apiAuth": {
       "builder": {
         "headers": {
-          "AuthorizationBearer": "scraperToken",
-          "key": "publicKey",
-          "token": "publicToken"
+          "Authorization": "Bearer {scraperToken}",
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "note": "Requires ALL THREE headers",
+        "required": [
+          "scraperToken",
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "locations": {
+        "method": "query params",
+        "params": {
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "required": [
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "publicApi": {
+        "headers": {
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "note": "Account management, proxy users, whitelist",
+        "required": [
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "publicApiNew": {
+        "headers": {
+          "apiKey": "{apiKey}",
+          "sign": "{sign}"
+        },
+        "note": "Separate authentication system",
+        "required": [
+          "sign",
+          "apiKey"
+        ]
+      },
+      "serp": {
+        "headers": {
+          "bearer": {
+            "Authorization": "Bearer {scraperToken}"
+          },
+          "headerToken": {
+            "token": "{scraperToken}"
+          }
+        },
+        "mode": "bearer or headerToken",
+        "required": [
+          "scraperToken"
+        ]
+      },
+      "tasksDownload": {
+        "headers": {
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "required": [
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "tasksList": {
+        "headers": {
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "required": [
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "tasksStatus": {
+        "headers": {
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "required": [
+          "publicToken",
+          "publicKey"
+        ]
+      },
+      "universal": {
+        "headers": {
+          "bearer": {
+            "Authorization": "Bearer {scraperToken}"
+          },
+          "headerToken": {
+            "token": "{scraperToken}"
+          }
+        },
+        "mode": "bearer or headerToken",
+        "required": [
+          "scraperToken"
+        ]
+      },
+      "videoBuilder": {
+        "headers": {
+          "Authorization": "Bearer {scraperToken}",
+          "key": "{publicKey}",
+          "token": "{publicToken}"
+        },
+        "note": "Same as builder",
+        "required": [
+          "scraperToken",
+          "publicToken",
+          "publicKey"
+        ]
+      }
+    },
+    "credentials": {
+      "apiKey": {
+        "envVar": "THORDATA_API_KEY",
+        "mutable": true,
+        "required": false,
+        "source": "Dashboard -> Public API NEW",
+        "usedBy": [
+          "publicApiNew"
+        ]
+      },
+      "publicKey": {
+        "envVar": "THORDATA_PUBLIC_KEY",
+        "required": false,
+        "source": "Dashboard -> My Account",
+        "usedBy": [
+          "publicApi",
+          "locations",
+          "tasks"
+        ]
+      },
+      "publicToken": {
+        "envVar": "THORDATA_PUBLIC_TOKEN",
+        "required": false,
+        "source": "Dashboard -> My Account",
+        "usedBy": [
+          "publicApi",
+          "locations",
+          "tasks"
+        ]
+      },
+      "scraperToken": {
+        "envVar": "THORDATA_SCRAPER_TOKEN",
+        "required": true,
+        "source": "Dashboard -> Account Settings",
+        "usedBy": [
+          "serp",
+          "universal",
+          "builder"
+        ]
+      },
+      "sign": {
+        "envVar": "THORDATA_SIGN",
+        "immutable": true,
+        "required": false,
+        "source": "Dashboard -> Public API NEW",
+        "usedBy": [
+          "publicApiNew"
+        ]
+      }
+    },
+    "decisionTree": {
+      "answers": {
+        "Account management (usage, users, whitelist, proxy list)": {
+          "useCredential": [
+            "publicToken",
+            "publicKey"
+          ]
+        },
+        "Locations API": {
+          "method": "query params",
+          "useCredential": [
+            "publicToken",
+            "publicKey"
+          ]
+        },
+        "Public API NEW (balance, ISP regions)": {
+          "note": "Different auth system",
+          "useCredential": [
+            "sign",
+            "apiKey"
+          ]
+        },
+        "SERP or Universal": {
+          "authMode": "bearer (default) or headerToken",
+          "useCredential": "scraperToken"
+        },
+        "Task status/download/list": {
+          "useCredential": [
+            "publicToken",
+            "publicKey"
+          ]
+        },
+        "Web Scraper builder/video_builder": {
+          "note": "Need all three",
+          "useCredential": [
+            "scraperToken",
+            "publicToken",
+            "publicKey"
+          ]
         }
       },
-      "download": {
-        "headers": {
-          "key": "publicKey",
-          "token": "publicToken"
-        }
-      },
-      "list": {
-        "headers": {
-          "key": "publicKey",
-          "token": "publicToken"
-        }
-      },
-      "status": {
-        "headers": {
-          "key": "publicKey",
-          "token": "publicToken"
+      "question": "Which API are you calling?"
+    },
+    "serpUniversalAuth": {
+      "modes": {
+        "bearer": {
+          "default": true,
+          "documentation": "Thordata Docs examples",
+          "format": "Bearer {scraperToken}",
+          "header": "Authorization"
+        },
+        "headerToken": {
+          "default": false,
+          "documentation": "Interface documentation",
+          "format": "{scraperToken}",
+          "header": "token"
         }
       }
     }
@@ -104,9 +283,10 @@
     }
   },
   "errors": {
-    "codes": {
+    "apiCodes": {
       "notCollected": {
         "code": 300,
+        "description": "Request accepted but no data collected (not billed)",
         "retryable": true
       }
     },
@@ -127,6 +307,7 @@
       ],
       "validation": [
         400,
+        404,
         422
       ]
     },
@@ -143,7 +324,62 @@
     },
     "precedence": {
       "effectiveCodeRule": "payload_code_if_present_and_not_200_else_http_status"
-    }
+    },
+    "publicApiCodes": {
+      "10000": {
+        "message": "Parameter error",
+        "retryable": false
+      },
+      "10001": {
+        "message": "Unknown error",
+        "retryable": false
+      },
+      "10011": {
+        "message": "Frequent operations, please try again later",
+        "retryable": true,
+        "suggestedAction": "exponential_backoff"
+      },
+      "10013": {
+        "category": "auth",
+        "message": "sign error",
+        "retryable": false
+      },
+      "10014": {
+        "category": "auth",
+        "message": "apiKey error",
+        "retryable": false
+      },
+      "10018": {
+        "category": "validation",
+        "message": "The username already exists",
+        "retryable": false
+      },
+      "10021": {
+        "category": "validation",
+        "message": "The query date cannot exceed 180 days",
+        "retryable": false
+      }
+    },
+    "serpCodes": [
+      200,
+      300,
+      400,
+      401,
+      403,
+      404,
+      429,
+      500,
+      504
+    ],
+    "universalCodes": [
+      200,
+      300,
+      400,
+      401,
+      429,
+      500,
+      504
+    ]
   },
   "network": {
     "apiTraffic": {
@@ -190,6 +426,9 @@
       "compatibilityHosts": [
         "pr.thordata.net",
         "t.pr.thordata.net",
+        "t.na.thordata.net",
+        "t.eu.thordata.net",
+        "t.as.thordata.net",
         "dc.pr.thordata.net",
         "m.pr.thordata.net",
         "isp.pr.thordata.net"
@@ -245,6 +484,311 @@
         "sessid",
         "sesstime"
       ]
+    }
+  },
+  "publicApi": {
+    "auth": {
+      "headers": {
+        "key": "publicKey",
+        "token": "publicToken"
+      }
+    },
+    "proxyExpiration": {
+      "baseUrl": "https://openapi.thordata.com/api",
+      "endpoint": "/proxy/expiration-time",
+      "method": "GET",
+      "params": [
+        "token",
+        "key",
+        "proxy_type",
+        "ips"
+      ]
+    },
+    "proxyList": {
+      "baseUrl": "https://api.thordata.com/api",
+      "endpoint": "/proxy/proxy-list",
+      "method": "GET",
+      "params": [
+        "token",
+        "key",
+        "proxy_type"
+      ],
+      "proxyTypes": {
+        "1": "ISP",
+        "2": "Datacenter"
+      },
+      "responseFields": [
+        "ip",
+        "port",
+        "username",
+        "password",
+        "expiration_time"
+      ]
+    },
+    "proxyUsers": {
+      "create": {
+        "baseUrl": "https://openapi.thordata.com/api",
+        "endpoint": "/proxy-users/create-user",
+        "method": "POST",
+        "requestFields": {
+          "password": {
+            "required": true,
+            "type": "string"
+          },
+          "proxy_type": {
+            "required": true,
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string"
+          },
+          "traffic_limit": {
+            "description": "Traffic limit in MB (0 = unlimited, min 100)",
+            "type": "integer"
+          },
+          "username": {
+            "required": true,
+            "type": "string"
+          }
+        }
+      },
+      "list": {
+        "baseUrl": "https://openapi.thordata.com/api",
+        "endpoint": "/proxy-users/user-list",
+        "method": "GET",
+        "params": [
+          "token",
+          "key",
+          "proxy_type"
+        ],
+        "proxyTypes": {
+          "1": "Residential",
+          "2": "Unlimited"
+        },
+        "responseFields": {
+          "limit": {
+            "type": "number",
+            "unit": "KB"
+          },
+          "list": {
+            "items": {
+              "password": "string",
+              "status": "boolean",
+              "traffic_limit": "integer",
+              "usage_traffic": "number",
+              "username": "string"
+            },
+            "type": "array"
+          },
+          "remaining_limit": {
+            "type": "number",
+            "unit": "KB"
+          },
+          "user_count": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "usageStatistics": {
+      "baseUrl": "https://openapi.thordata.com/api",
+      "endpoint": "/account/usage-statistics",
+      "method": "GET",
+      "params": [
+        "token",
+        "key",
+        "from_date",
+        "to_date"
+      ],
+      "responseFields": {
+        "data": {
+          "description": "Daily usage breakdown",
+          "type": "array"
+        },
+        "query_days": {
+          "type": "integer"
+        },
+        "range_usage_traffic": {
+          "type": "number",
+          "unit": "KB"
+        },
+        "total_usage_traffic": {
+          "type": "number",
+          "unit": "KB"
+        },
+        "traffic_balance": {
+          "type": "number",
+          "unit": "KB"
+        }
+      }
+    },
+    "whitelist": {
+      "addIp": {
+        "baseUrl": "https://api.thordata.com/api",
+        "endpoint": "/whitelisted-ips/add-ip",
+        "method": "POST",
+        "requestFields": {
+          "ip": {
+            "required": true,
+            "type": "string"
+          },
+          "proxy_type": {
+            "description": "1=Residential, 2=Unlimited, 9=Mobile",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "publicApiNew": {
+    "auth": {
+      "description": "Public API NEW uses sign + apiKey headers",
+      "headers": {
+        "apiKey": {
+          "description": "API key (can be changed in Dashboard)",
+          "envVar": "THORDATA_API_KEY"
+        },
+        "sign": {
+          "description": "Immutable sign value from Dashboard",
+          "envVar": "THORDATA_SIGN"
+        }
+      }
+    },
+    "baseUrl": "https://api.thordata.com/api",
+    "isp": {
+      "getExpiration": {
+        "endpoint": "/gateway/queryTimeIsp",
+        "method": "POST",
+        "requestFields": {
+          "ips": {
+            "description": "Comma-separated IP list",
+            "type": "string"
+          }
+        },
+        "responseFields": {
+          "expire_time": "integer"
+        }
+      },
+      "getRegions": {
+        "description": "Get available ISP proxy regions",
+        "endpoint": "/gateway/getRegionIsp",
+        "method": "POST",
+        "responseFields": [
+          "id",
+          "continent",
+          "country",
+          "city",
+          "num",
+          "pricing"
+        ]
+      },
+      "getWalletBalance": {
+        "endpoint": "/gateway/getBalance",
+        "method": "POST",
+        "responseFields": {
+          "walletBalance": "number"
+        }
+      },
+      "listProxies": {
+        "description": "List ISP proxies",
+        "endpoint": "/gateway/queryListIsp",
+        "method": "POST",
+        "responseFields": [
+          "ip",
+          "port",
+          "user",
+          "pwd",
+          "startTime",
+          "expireTime"
+        ]
+      }
+    },
+    "residential": {
+      "deleteUser": {
+        "endpoint": "/child/del_user",
+        "method": "GET",
+        "params": [
+          "sign",
+          "apiKey",
+          "username"
+        ]
+      },
+      "editUser": {
+        "endpoint": "/child/edit_user",
+        "method": "GET",
+        "params": [
+          "sign",
+          "apiKey",
+          "username",
+          "new_password",
+          "new_flow_limit",
+          "new_status"
+        ]
+      },
+      "getBalance": {
+        "description": "Get residential proxy balance",
+        "endpoint": "/gateway/getFlowBalance",
+        "method": "POST",
+        "responseFields": {
+          "balance": {
+            "type": "integer",
+            "unit": "bytes"
+          },
+          "expire_time": {
+            "description": "Unix timestamp",
+            "type": "integer"
+          }
+        }
+      },
+      "getUsage": {
+        "endpoint": "/gateway/usageRecord",
+        "method": "POST",
+        "requestFields": {
+          "end_time": {
+            "description": "Unix timestamp or YYYY-MM-DD HH:MM:SS",
+            "type": "string"
+          },
+          "start_time": {
+            "description": "Unix timestamp or YYYY-MM-DD HH:MM:SS",
+            "type": "string"
+          }
+        },
+        "responseFields": {
+          "all_flow": "integer",
+          "all_used_flow": "integer",
+          "balance": "integer",
+          "data": "array"
+        }
+      },
+      "userList": {
+        "endpoint": "/child/user_list",
+        "method": "GET",
+        "responseFields": {
+          "list": {
+            "items": {
+              "flow_limit": "integer",
+              "password": "string",
+              "status": {
+                "description": "1=enabled, -2=disabled",
+                "type": "integer"
+              },
+              "username": "string"
+            },
+            "type": "array"
+          }
+        }
+      }
     }
   },
   "serp": {
@@ -334,6 +878,16 @@
   },
   "tasks": {
     "builder": {
+      "auth": {
+        "headers": {
+          "AuthorizationBearer": "scraperToken",
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "baseUrl": "https://scraperapi.thordata.com",
+      "endpoint": "/builder",
+      "method": "POST",
       "requestFields": [
         "file_name",
         "spider_id",
@@ -344,15 +898,178 @@
       ]
     },
     "download": {
+      "auth": {
+        "headers": {
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "baseUrl": "https://openapi.thordata.com/api/web-scraper-api",
+      "downloadTypes": [
+        "json",
+        "csv",
+        "video",
+        "subtitle",
+        "audio"
+      ],
+      "endpoint": "/tasks-download",
+      "method": "POST",
       "requestFields": [
         "tasks_id",
         "type"
       ]
     },
+    "list": {
+      "auth": {
+        "headers": {
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "baseUrl": "https://openapi.thordata.com/api/web-scraper-api",
+      "endpoint": "/tasks-list",
+      "method": "POST",
+      "requestFields": [
+        "page",
+        "size"
+      ],
+      "responseFields": [
+        "count",
+        "list"
+      ]
+    },
     "status": {
+      "auth": {
+        "headers": {
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "baseUrl": "https://openapi.thordata.com/api/web-scraper-api",
+      "endpoint": "/tasks-status",
+      "method": "POST",
       "requestFields": [
         "tasks_ids"
       ]
+    },
+    "videoBuilder": {
+      "auth": {
+        "headers": {
+          "AuthorizationBearer": "scraperToken",
+          "key": "publicKey",
+          "token": "publicToken"
+        }
+      },
+      "baseUrl": "https://scraperapi.thordata.com",
+      "commonSettings": {
+        "description": "YouTube video/audio common settings (JSON string)",
+        "fields": {
+          "audio_format": {
+            "description": "Audio format (required for audio spider)",
+            "enum": [
+              "opus",
+              "mp3"
+            ],
+            "type": "string"
+          },
+          "bitrate": {
+            "description": "Audio bitrate (48/64/128/160/256/320 or with Kbps suffix)",
+            "type": "string"
+          },
+          "is_subtitles": {
+            "description": "Download subtitles (required)",
+            "enum": [
+              "true",
+              "false"
+            ],
+            "type": "string"
+          },
+          "resolution": {
+            "description": "Video resolution (optional, auto-downgrades if unavailable)",
+            "enum": [
+              "360p",
+              "480p",
+              "720p",
+              "1080p",
+              "1440p",
+              "2160p"
+            ],
+            "type": "string"
+          },
+          "subtitles_language": {
+            "description": "Subtitle language code (e.g., 'en', 'zh-Hans')",
+            "type": "string"
+          }
+        }
+      },
+      "endpoint": "/video_builder",
+      "method": "POST",
+      "requestFields": [
+        "file_name",
+        "spider_id",
+        "spider_name",
+        "spider_parameters",
+        "spider_errors",
+        "common_settings"
+      ]
+    },
+    "webhook": {
+      "description": "Webhook events sent by Thordata when task status changes",
+      "events": [
+        "Running",
+        "Task Succeeded",
+        "Task Failed"
+      ],
+      "payload": {
+        "apiCode": {
+          "description": "API response code",
+          "type": "integer"
+        },
+        "apiErrorMsg": {
+          "description": "Error message if any",
+          "type": "string"
+        },
+        "audioUrl": {
+          "description": "Audio download URL (for audio tasks)",
+          "type": "string"
+        },
+        "createdTime": {
+          "description": "Task creation time",
+          "type": "string"
+        },
+        "csvUrl": {
+          "description": "CSV result download URL",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "Task completion time",
+          "type": "string"
+        },
+        "jsonUrl": {
+          "description": "JSON result download URL",
+          "type": "string"
+        },
+        "prodect_id": {
+          "description": "Product ID",
+          "type": "string"
+        },
+        "status": {
+          "description": "Task status",
+          "type": "string"
+        },
+        "subtitleUrl": {
+          "description": "Subtitle download URL",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "Task ID",
+          "type": "string"
+        },
+        "videoUrl": {
+          "description": "Video download URL (for video tasks)",
+          "type": "string"
+        }
+      }
     }
   },
   "version": 1
