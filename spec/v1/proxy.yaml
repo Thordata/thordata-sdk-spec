@@ -18,6 +18,9 @@ gateway:
   compatibilityHosts:
     - "pr.thordata.net"
     - "t.pr.thordata.net"
+    - "t.na.thordata.net"
+    - "t.eu.thordata.net"
+    - "t.as.thordata.net"
     - "dc.pr.thordata.net"
     - "m.pr.thordata.net"
     - "isp.pr.thordata.net"

@@ -10,8 +10,10 @@ precedence:
 codes:
   notCollected: { code: 300, retryable: true }
 
+# SERP API codes: 200, 300, 400, 401, 403, 404, 429, 500, 504
+# Web Unlocker codes: 200, 300, 400, 401, 429, 500, 504
 httpStatus:
   auth:      [401, 403]
   rateLimit: [402, 429]
   server:    [500, 502, 503, 504]
-  validation: [400, 422]
+  validation: [400, 404, 422]
