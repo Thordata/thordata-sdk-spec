@@ -124,7 +124,7 @@
         "envVar": "THORDATA_API_KEY",
         "mutable": true,
         "required": false,
-        "source": "Dashboard -> Public API NEW",
+        "source": "Dashboard -> Public API NEW(or same as publicToken)",
         "usedBy": [
           "publicApiNew"
         ]
@@ -163,7 +163,7 @@
         "envVar": "THORDATA_SIGN",
         "immutable": true,
         "required": false,
-        "source": "Dashboard -> Public API NEW",
+        "source": "Dashboard -> Public API NEW(or same as publicToken)",
         "usedBy": [
           "publicApiNew"
         ]

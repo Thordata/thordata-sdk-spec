@@ -23,14 +23,14 @@ credentials:
 
   sign:
     envVar: "THORDATA_SIGN"
-    source: "Dashboard -> Public API NEW"
+    source: "Dashboard -> Public API NEW(or same as publicToken)"
     required: false
     immutable: true
     usedBy: ["publicApiNew"]
 
   apiKey:
     envVar: "THORDATA_API_KEY"
-    source: "Dashboard -> Public API NEW"
+    source: "Dashboard -> Public API NEW(or same as publicToken)"
     required: false
     mutable: true
     usedBy: ["publicApiNew"]
