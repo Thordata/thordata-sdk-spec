@@ -1,47 +1,47 @@
 # thordata-sdk-spec
 
-A small, versioned specification repository used to keep Thordata SDKs (Python/JS) consistent.
+A versioned specification repository used to keep Thordata SDKs (Python, Node.js, Go, Java) consistent.
 
-This repository defines the canonical defaults and parameter conventions for:
+This repository defines the canonical defaults, parameter conventions, and shared logic for:
 - API base URLs and environment variables
-- Endpoint paths
+- Endpoint paths and authentication methods
 - Proxy gateway conventions (hosts, ports, username format)
-- SERP parameter normalization (e.g. `searchType -> tbm`)
+- SERP parameter normalization
 - Error code handling precedence and mappings
-- Network/proxy behavior notes (especially for restricted networks)
+- Webhook payload definitions
+- Public API and API NEW specifications
 
-Any change to v1.json requires bumping sdk-spec submodule in all SDK repos (or explicitly postponing the bump).
+Any change to `v1.json` requires bumping the sdk-spec submodule in all SDK repos.
 
-## Files
+## Structure
 
 ### `v1.json` (Canonical artifact)
-`v1.json` is the canonical, machine-readable spec snapshot consumed by SDK parity tests.
-
-SDK repositories typically include this repo as a git submodule at `sdk-spec/` and read:
-- `sdk-spec/v1.json`
+The single source of truth consumed by SDK parity tests. Generated from the YAML sources in `spec/v1/`.
 
 ### `spec/v1/*.yaml` (Human-readable sources)
-The YAML files under `spec/v1/` are the human-readable spec sources.
+- `auth.yaml`: Authentication modes (Bearer, Header Token, Sign/ApiKey)
+- `endpoints.yaml`: API paths and methods
+- `env.yaml`: Environment variable names and defaults
+- `errors.yaml`: Error code mappings (300, 4xx, 5xx)
+- `proxy.yaml`: Proxy hosts, ports, and username construction rules
+- `serp.yaml`: Search engine parameters and mappings
+- `tasks.yaml`: Web Scraper API definitions (Builder, Video Builder, List, Status)
+- `public_api.yaml`: Public API endpoints (Usage, Users, Whitelist)
+- `public_api_new.yaml`: API NEW endpoints (Sign/ApiKey auth)
 
-At this stage, `v1.json` is maintained manually and should remain consistent with the YAML sources.
+### `tools/`
+Scripts to build (`build_v1_json.py`) and validate (`validate_v1_json.py`) the JSON spec.
 
-### `schema/v1.schema.json` (Optional validation)
-A JSON Schema for validating `v1.json`. This is optional but recommended.
-
-## Versioning policy
+## Versioning Policy
 
 - `v1` is considered stable.
-- Backward-compatible changes (additive fields, clarifications) may update `v1` and should bump the git tag (e.g. `v1.0.1`).
-- Breaking changes must create a new version (`v2.json` and `spec/v2/...`).
+- Backward-compatible changes update `v1.json` (and git tag).
+- Breaking changes require a new major version (`v2`).
 
-## Change workflow
+## Change Workflow
 
-1. Update YAML sources in `spec/v1/` (and/or `v1.json`).
-2. Keep `v1.json` in sync with the YAML sources.
-3. Tag a new version (e.g. `v1.0.1`).
-4. Bump the `sdk-spec` submodule pointer in both SDK repos.
-5. Ensure SDK parity tests pass in both repositories.
-
-## Notes for restricted networks
-
-See `spec/v1/network.yaml` for guidance about environment proxies and tunneling (e.g. TUN mode).
+1. Update YAML sources in `spec/v1/`.
+2. Run `python tools/build_v1_json.py` to regenerate `v1.json`.
+3. Verify with `python tools/validate_v1_json.py`.
+4. Commit changes.
+5. Update submodules in SDK repositories.
