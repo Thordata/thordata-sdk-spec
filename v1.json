@@ -36,17 +36,6 @@
           "publicKey"
         ]
       },
-      "publicApiNew": {
-        "headers": {
-          "apiKey": "{apiKey}",
-          "sign": "{sign}"
-        },
-        "note": "Separate authentication system",
-        "required": [
-          "sign",
-          "apiKey"
-        ]
-      },
       "serp": {
         "headers": {
           "bearer": {
@@ -120,15 +109,6 @@
       }
     },
     "credentials": {
-      "apiKey": {
-        "envVar": "THORDATA_API_KEY",
-        "mutable": true,
-        "required": false,
-        "source": "Dashboard -> Public API NEW(or same as publicToken)",
-        "usedBy": [
-          "publicApiNew"
-        ]
-      },
       "publicKey": {
         "envVar": "THORDATA_PUBLIC_KEY",
         "required": false,
@@ -158,15 +138,6 @@
           "universal",
           "builder"
         ]
-      },
-      "sign": {
-        "envVar": "THORDATA_SIGN",
-        "immutable": true,
-        "required": false,
-        "source": "Dashboard -> Public API NEW(or same as publicToken)",
-        "usedBy": [
-          "publicApiNew"
-        ]
       }
     },
     "decisionTree": {
@@ -182,13 +153,6 @@
           "useCredential": [
             "publicToken",
             "publicKey"
-          ]
-        },
-        "Public API NEW (balance, ISP regions)": {
-          "note": "Different auth system",
-          "useCredential": [
-            "sign",
-            "apiKey"
           ]
         },
         "SERP or Universal": {
@@ -267,6 +231,43 @@
         "env": "THORDATA_WEB_SCRAPER_API_BASE_URL"
       }
     },
+    "proxyEndpoint": {
+      "host": {
+        "env": "THORDATA_PROXY_HOST",
+        "required": false
+      },
+      "port": {
+        "default": 9999,
+        "env": "THORDATA_PROXY_PORT",
+        "required": false
+      },
+      "protocol": {
+        "default": "https",
+        "enum": [
+          "http",
+          "https"
+        ],
+        "env": "THORDATA_PROXY_PROTOCOL",
+        "required": false
+      }
+    },
+    "proxyEndpointPerProduct": {
+      "datacenter": {
+        "hostEnv": "THORDATA_DATACENTER_PROXY_HOST",
+        "portEnv": "THORDATA_DATACENTER_PROXY_PORT",
+        "protocolEnv": "THORDATA_DATACENTER_PROXY_PROTOCOL"
+      },
+      "mobile": {
+        "hostEnv": "THORDATA_MOBILE_PROXY_HOST",
+        "portEnv": "THORDATA_MOBILE_PROXY_PORT",
+        "protocolEnv": "THORDATA_MOBILE_PROXY_PROTOCOL"
+      },
+      "residential": {
+        "hostEnv": "THORDATA_RESIDENTIAL_PROXY_HOST",
+        "portEnv": "THORDATA_RESIDENTIAL_PROXY_PORT",
+        "protocolEnv": "THORDATA_RESIDENTIAL_PROXY_PROTOCOL"
+      }
+    },
     "tokens": {
       "publicKey": {
         "env": "THORDATA_PUBLIC_KEY",
@@ -341,12 +342,12 @@
       },
       "10013": {
         "category": "auth",
-        "message": "sign error",
+        "message": "public token error",
         "retryable": false
       },
       "10014": {
         "category": "auth",
-        "message": "apiKey error",
+        "message": "public key error",
         "retryable": false
       },
       "10018": {
@@ -438,6 +439,15 @@
         "{shard}.{region}.thordata.net"
       ],
       "defaultHost": "pr.thordata.net",
+      "endpointEnv": {
+        "host": "THORDATA_PROXY_HOST",
+        "port": "THORDATA_PROXY_PORT",
+        "protocol": "THORDATA_PROXY_PROTOCOL"
+      },
+      "notes": [
+        "Some accounts require HTTPS proxy endpoints (proxy URL must start with https://).",
+        "SDK implementations must support TLS to proxy / TLS-in-TLS for HTTPS proxies."
+      ],
       "regions": {
         "common": [
           "na",
@@ -646,146 +656,6 @@
               "false"
             ],
             "type": "string"
-          }
-        }
-      }
-    }
-  },
-  "publicApiNew": {
-    "auth": {
-      "description": "Public API NEW uses sign + apiKey headers",
-      "headers": {
-        "apiKey": {
-          "description": "API key (can be changed in Dashboard)",
-          "envVar": "THORDATA_API_KEY"
-        },
-        "sign": {
-          "description": "Immutable sign value from Dashboard",
-          "envVar": "THORDATA_SIGN"
-        }
-      }
-    },
-    "baseUrl": "https://api.thordata.com/api",
-    "isp": {
-      "getExpiration": {
-        "endpoint": "/gateway/queryTimeIsp",
-        "method": "POST",
-        "requestFields": {
-          "ips": {
-            "description": "Comma-separated IP list",
-            "type": "string"
-          }
-        },
-        "responseFields": {
-          "expire_time": "integer"
-        }
-      },
-      "getRegions": {
-        "description": "Get available ISP proxy regions",
-        "endpoint": "/gateway/getRegionIsp",
-        "method": "POST",
-        "responseFields": [
-          "id",
-          "continent",
-          "country",
-          "city",
-          "num",
-          "pricing"
-        ]
-      },
-      "getWalletBalance": {
-        "endpoint": "/gateway/getBalance",
-        "method": "POST",
-        "responseFields": {
-          "walletBalance": "number"
-        }
-      },
-      "listProxies": {
-        "description": "List ISP proxies",
-        "endpoint": "/gateway/queryListIsp",
-        "method": "POST",
-        "responseFields": [
-          "ip",
-          "port",
-          "user",
-          "pwd",
-          "startTime",
-          "expireTime"
-        ]
-      }
-    },
-    "residential": {
-      "deleteUser": {
-        "endpoint": "/child/del_user",
-        "method": "GET",
-        "params": [
-          "sign",
-          "apiKey",
-          "username"
-        ]
-      },
-      "editUser": {
-        "endpoint": "/child/edit_user",
-        "method": "GET",
-        "params": [
-          "sign",
-          "apiKey",
-          "username",
-          "new_password",
-          "new_flow_limit",
-          "new_status"
-        ]
-      },
-      "getBalance": {
-        "description": "Get residential proxy balance",
-        "endpoint": "/gateway/getFlowBalance",
-        "method": "POST",
-        "responseFields": {
-          "balance": {
-            "type": "integer",
-            "unit": "bytes"
-          },
-          "expire_time": {
-            "description": "Unix timestamp",
-            "type": "integer"
-          }
-        }
-      },
-      "getUsage": {
-        "endpoint": "/gateway/usageRecord",
-        "method": "POST",
-        "requestFields": {
-          "end_time": {
-            "description": "Unix timestamp or YYYY-MM-DD HH:MM:SS",
-            "type": "string"
-          },
-          "start_time": {
-            "description": "Unix timestamp or YYYY-MM-DD HH:MM:SS",
-            "type": "string"
-          }
-        },
-        "responseFields": {
-          "all_flow": "integer",
-          "all_used_flow": "integer",
-          "balance": "integer",
-          "data": "array"
-        }
-      },
-      "userList": {
-        "endpoint": "/child/user_list",
-        "method": "GET",
-        "responseFields": {
-          "list": {
-            "items": {
-              "flow_limit": "integer",
-              "password": "string",
-              "status": {
-                "description": "1=enabled, -2=disabled",
-                "type": "integer"
-              },
-              "username": "string"
-            },
-            "type": "array"
           }
         }
       }

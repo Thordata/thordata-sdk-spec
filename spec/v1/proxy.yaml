@@ -1,5 +1,12 @@
 # spec/v1/proxy.yaml
 gateway:
+  endpointEnv:
+    host: THORDATA_PROXY_HOST
+    port: THORDATA_PROXY_PORT
+    protocol: THORDATA_PROXY_PROTOCOL
+  notes:
+    - "Some accounts require HTTPS proxy endpoints (proxy URL must start with https://)."
+    - "SDK implementations must support TLS to proxy / TLS-in-TLS for HTTPS proxies."
   # The SDK should allow users to explicitly pass a host; default values are only "fallbacks"
   defaultHost: "pr.thordata.net"
 

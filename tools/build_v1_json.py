@@ -40,8 +40,7 @@ def main() -> None:
         ("serp", "serp.yaml"),
         ("universal", "universal.yaml"),
         ("tasks", "tasks.yaml"),
-        ("publicApi", "public_api.yaml"),        # 新增
-        ("publicApiNew", "public_api_new.yaml"), # 新增
+        ("publicApi", "public_api.yaml"),
         ("errors", "errors.yaml"),
         ("network", "network.yaml"),
         ("locations", "locations.yaml"),

@@ -60,11 +60,11 @@ publicApiCodes:
     retryable: true
     suggestedAction: "exponential_backoff"
   10013:
-    message: "sign error"
+    message: "public token error"
     retryable: false
     category: "auth"
   10014:
-    message: "apiKey error"
+    message: "public key error"
     retryable: false
     category: "auth"
   10018:

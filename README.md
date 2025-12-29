@@ -9,7 +9,7 @@ This repository defines the canonical defaults, parameter conventions, and share
 - SERP parameter normalization
 - Error code handling precedence and mappings
 - Webhook payload definitions
-- Public API and API NEW specifications
+- “Public API specifications” + “Proxy Network conventions (including HTTPS proxy endpoints)”
 
 Any change to `v1.json` requires bumping the sdk-spec submodule in all SDK repos.
 
@@ -19,7 +19,7 @@ Any change to `v1.json` requires bumping the sdk-spec submodule in all SDK repos
 The single source of truth consumed by SDK parity tests. Generated from the YAML sources in `spec/v1/`.
 
 ### `spec/v1/*.yaml` (Human-readable sources)
-- `auth.yaml`: Authentication modes (Bearer, Header Token, Sign/ApiKey)
+- `auth.yaml`: Authentication modes (Bearer, Header Token, Public Token+Key, Proxy Basic Auth)
 - `endpoints.yaml`: API paths and methods
 - `env.yaml`: Environment variable names and defaults
 - `errors.yaml`: Error code mappings (300, 4xx, 5xx)
