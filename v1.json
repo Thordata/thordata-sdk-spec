@@ -942,5 +942,18 @@
       }
     }
   },
+  "universal": {
+    "userAgent": {
+      "components": {
+        "lang": "python, go, js, java",
+        "os_info": "Operating system and architecture details",
+        "runtime": "python, node, java, go",
+        "runtime_version": "Language runtime version",
+        "version": "SDK semantic version"
+      },
+      "description": "Standard User-Agent format for all SDKs",
+      "format": "thordata-{lang}-sdk/{version} {runtime}/{runtime_version} ({os_info})"
+    }
+  },
   "version": 1
 }

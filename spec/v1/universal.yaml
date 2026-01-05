@@ -1,0 +1,13 @@
+# FILE: thordata-sdk-spec/spec/v1/universal.yaml
+
+# Universal API settings and cross-SDK standards
+
+userAgent:
+  format: "thordata-{lang}-sdk/{version} {runtime}/{runtime_version} ({os_info})"
+  description: "Standard User-Agent format for all SDKs"
+  components:
+    lang: "python, go, js, java"
+    version: "SDK semantic version"
+    runtime: "python, node, java, go"
+    runtime_version: "Language runtime version"
+    os_info: "Operating system and architecture details"

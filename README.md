@@ -27,7 +27,6 @@ The single source of truth consumed by SDK parity tests. Generated from the YAML
 - `serp.yaml`: Search engine parameters and mappings
 - `tasks.yaml`: Web Scraper API definitions (Builder, Video Builder, List, Status)
 - `public_api.yaml`: Public API endpoints (Usage, Users, Whitelist)
-- `public_api_new.yaml`: API NEW endpoints (Sign/ApiKey auth)
 
 ### `tools/`
 Scripts to build (`build_v1_json.py`) and validate (`validate_v1_json.py`) the JSON spec.
