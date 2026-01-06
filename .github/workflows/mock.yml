@@ -22,9 +22,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
+      - name: Lowercase Repo Name
+        run: |
+          echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./mock-server
           push: true
-          tags: ghcr.io/${{ github.repository }}/mock-server:latest
+          tags: ghcr.io/${{ env.REPO_LC }}/mock-server:latest
