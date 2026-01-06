@@ -1,0 +1,264 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Thordata API Reference",
+    "version": "1.0.0",
+    "description": "Official API documentation for Thordata services.\n\n**Authentication**:\n- SERP/Universal: Bearer Token (`scraperToken`)\n- Public/Tasks: Query/Header params (`publicToken` + `publicKey`)"
+  },
+  "servers": [
+    {
+      "url": "https://scraperapi.thordata.com",
+      "description": "Scraper API (SERP, Builder)"
+    },
+    {
+      "url": "https://universalapi.thordata.com",
+      "description": "Universal API"
+    },
+    {
+      "url": "https://openapi.thordata.com/api",
+      "description": "Public & Web Scraper API"
+    },
+    {
+      "url": "https://api.thordata.com/api",
+      "description": "Proxy API"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ScraperAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token",
+        "description": "Use `scraperToken` from Dashboard -> Account Settings."
+      },
+      "PublicAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "token",
+        "description": "Use `publicToken` + `key` query param."
+      }
+    },
+    "schemas": {}
+  },
+  "paths": {
+    "/request": {
+      "post": {
+        "summary": "Universal Scraper (Web Unlocker)",
+        "description": "Scrape any URL with antibot bypass.",
+        "tags": [
+          "Universal API"
+        ],
+        "servers": [
+          {
+            "url": "https://universalapi.thordata.com"
+          }
+        ],
+        "security": [
+          {
+            "ScraperAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "js_render": {
+                    "type": "string",
+                    "enum": [
+                      "True",
+                      "False"
+                    ]
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "html",
+                      "png"
+                    ]
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "wait": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "HTML or PNG data"
+          }
+        }
+      }
+    },
+    "/builder": {
+      "post": {
+        "summary": "Create Scraper Task",
+        "tags": [
+          "Web Scraper API"
+        ],
+        "security": [
+          {
+            "ScraperAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file_name": {
+                    "type": "string"
+                  },
+                  "spider_name": {
+                    "type": "string"
+                  },
+                  "spider_id": {
+                    "type": "string"
+                  },
+                  "spider_parameters": {
+                    "type": "string",
+                    "description": "JSON string of params"
+                  }
+                },
+                "required": [
+                  "spider_id",
+                  "spider_name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task Created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "task_id": "123"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks-status": {
+      "post": {
+        "summary": "Get Task Status",
+        "tags": [
+          "Web Scraper API"
+        ],
+        "security": [
+          {
+            "PublicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tasks_ids": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task Status"
+          }
+        }
+      }
+    },
+    "/account/usage-statistics": {
+      "get": {
+        "summary": "Get Usage Statistics",
+        "tags": [
+          "Public API"
+        ],
+        "security": [
+          {
+            "PublicAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage Data"
+          }
+        }
+      }
+    }
+  }
+}
