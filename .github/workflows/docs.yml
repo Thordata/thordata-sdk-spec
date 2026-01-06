@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install dependencies
+        run: pip install PyYAML
+
       - name: Build OpenAPI Spec
         run: |
           python tools/build_v1_json.py --out v1.json # Ensure v1.json is fresh
