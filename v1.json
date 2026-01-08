@@ -245,7 +245,8 @@
         "default": "https",
         "enum": [
           "http",
-          "https"
+          "https",
+          "socks5h"
         ],
         "env": "THORDATA_PROXY_PROTOCOL",
         "required": false
@@ -515,7 +516,7 @@
       ]
     },
     "proxyList": {
-      "baseUrl": "https://api.thordata.com/api",
+      "baseUrl": "https://openapi.thordata.com/api",
       "endpoint": "/proxy/proxy-list",
       "method": "GET",
       "params": [

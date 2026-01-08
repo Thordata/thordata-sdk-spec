@@ -104,7 +104,7 @@ whitelist:
 # ISP/Datacenter proxy list
 proxyList:
   endpoint: "/proxy/proxy-list"
-  baseUrl: "https://api.thordata.com/api"
+  baseUrl: "https://openapi.thordata.com/api"
   method: "GET"
   params:
     - token

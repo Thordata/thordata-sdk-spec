@@ -23,6 +23,10 @@ def main() -> None:
     if rule != "payload_code_if_present_and_not_200_else_http_status":
         raise SystemExit(f"Unexpected effectiveCodeRule: {rule}")
 
+    proto_enum = spec["env"]["proxyEndpoint"]["protocol"]["enum"]
+    if "socks5h" not in proto_enum:
+        raise SystemExit("env.proxyEndpoint.protocol.enum must include socks5h")
+
     ports = spec["proxy"]["products"]
     for k in ("residential", "mobile", "datacenter", "isp"):
         p = ports[k]["port"]
