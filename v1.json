@@ -231,24 +231,49 @@
         "env": "THORDATA_WEB_SCRAPER_API_BASE_URL"
       }
     },
+    "integrationTest": {
+      "enabled": {
+        "default": false,
+        "env": "THORDATA_INTEGRATION"
+      },
+      "httpTest": {
+        "default": false,
+        "description": "Include HTTP protocol in integration tests (deprecated)",
+        "env": "THORDATA_INTEGRATION_HTTP"
+      },
+      "strict": {
+        "default": false,
+        "description": "Fail tests on network interference instead of skipping",
+        "env": "THORDATA_INTEGRATION_STRICT"
+      }
+    },
     "proxyEndpoint": {
       "host": {
+        "description": "Proxy gateway host (get from Dashboard endpoint generator)",
         "env": "THORDATA_PROXY_HOST",
+        "example": "vpn9wq0d.pr.thordata.net",
         "required": false
       },
       "port": {
         "default": 9999,
+        "description": "Proxy gateway port",
         "env": "THORDATA_PROXY_PORT",
         "required": false
       },
       "protocol": {
         "default": "https",
+        "description": "Proxy protocol (https recommended, http deprecated)",
         "enum": [
           "http",
           "https",
           "socks5h"
         ],
         "env": "THORDATA_PROXY_PROTOCOL",
+        "notes": [
+          "Most Thordata accounts require HTTPS protocol",
+          "HTTP protocol is not supported by most proxy servers",
+          "socks5h provides remote DNS resolution for better privacy"
+        ],
         "required": false
       }
     },
@@ -282,6 +307,34 @@
         "env": "THORDATA_SCRAPER_TOKEN",
         "required": true
       }
+    },
+    "upstreamProxy": {
+      "description": "Upstream proxy for accessing Thordata from restricted networks",
+      "env": "THORDATA_UPSTREAM_PROXY",
+      "examples": {
+        "http": "http://127.0.0.1:7897",
+        "socks5": "socks5://127.0.0.1:7897",
+        "socks5_with_auth": "socks5://user:pass@127.0.0.1:7897"
+      },
+      "notes": [
+        "Clash Verge default port: 7897",
+        "V2Ray default port: 1080 (SOCKS) or 1087 (HTTP)",
+        "Enables proxy chain: Client -> Upstream -> Thordata -> Target",
+        "Python SDK has full TLS-in-TLS support",
+        "Go/JS SDKs work best with TUN mode or system proxy"
+      ],
+      "required": false,
+      "supportedProtocols": [
+        "socks5",
+        "socks5h",
+        "http",
+        "https"
+      ],
+      "use_cases": [
+        "Users in mainland China behind GFW",
+        "Corporate networks with firewall restrictions",
+        "Users requiring proxy chaining"
+      ]
     }
   },
   "errors": {
@@ -402,6 +455,10 @@
   },
   "proxy": {
     "auth": {
+      "notes": [
+        "Username format: td-customer-{account}-{targeting-params}",
+        "Targeting params: country, city, session_id, etc."
+      ],
       "passwordMayBeEmpty": true,
       "usernamePrefix": "td-customer-"
     },
@@ -422,6 +479,32 @@
       "residential": {
         "password": "THORDATA_RESIDENTIAL_PASSWORD",
         "username": "THORDATA_RESIDENTIAL_USERNAME"
+      }
+    },
+    "curl_examples": {
+      "http_fails": {
+        "command": "curl -x \"http://td-customer-user:pass@vpnXXXX.pr.thordata.net:9999\" \"http://ipinfo.thordata.com\"",
+        "expected": "Empty reply from server or connection refused",
+        "note": "HTTP protocol not supported by most Thordata servers"
+      },
+      "https_proxy_success": {
+        "command": "curl -x \"https://td-customer-user:pass@vpnXXXX.pr.thordata.net:9999\" \"https://ipinfo.thordata.com\"",
+        "expected": "200 OK with IP info JSON",
+        "note": "This is the recommended method"
+      },
+      "socks5h_success": {
+        "command": "curl -x \"socks5h://td-customer-user:pass@vpnXXXX.pr.thordata.net:9999\" \"https://ipinfo.thordata.com\"",
+        "expected": "200 OK with IP info JSON",
+        "note": "Alternative to HTTPS, simpler implementation"
+      },
+      "upstream_chain_example": {
+        "command": "python -c 'from thordata import ThordataClient; ...'",
+        "description": "Using Clash as upstream proxy",
+        "flow": "Client -> Clash (127.0.0.1:7897) -> Thordata Proxy -> Target",
+        "setup": [
+          "Start Clash Verge (default port 7897)",
+          "Set environment: export THORDATA_UPSTREAM_PROXY=socks5://127.0.0.1:7897"
+        ]
       }
     },
     "gateway": {
@@ -446,8 +529,11 @@
         "protocol": "THORDATA_PROXY_PROTOCOL"
       },
       "notes": [
-        "Some accounts require HTTPS proxy endpoints (proxy URL must start with https://).",
-        "SDK implementations must support TLS to proxy / TLS-in-TLS for HTTPS proxies."
+        "IMPORTANT: Most accounts require HTTPS proxy protocol",
+        "HTTP protocol is deprecated and not supported by most proxy servers",
+        "Always use dashboard-provided endpoint (e.g., vpn9wq0d.pr.thordata.net)",
+        "SDK implementations must support TLS to proxy for HTTPS protocol",
+        "For HTTPS proxy + HTTPS target: requires TLS-in-TLS (Python supported, Go/JS simplified)"
       ],
       "regions": {
         "common": [
@@ -463,20 +549,170 @@
     },
     "products": {
       "datacenter": {
-        "port": 7777
+        "port": 7777,
+        "recommended_protocol": "https"
       },
       "isp": {
         "mode": "direct_or_gateway",
+        "notes": "Static IPs use direct connection, not gateway",
         "port": 6666
       },
       "mobile": {
-        "port": 5555
+        "port": 5555,
+        "recommended_protocol": "https"
       },
       "residential": {
-        "port": 9999
+        "port": 9999,
+        "recommended_protocol": "https"
+      }
+    },
+    "protocols": {
+      "supported": {
+        "http": {
+          "curl_example": "curl -x \"http://user:pass@host:9999\" \"http://example.com\"  # Usually fails",
+          "description": "HTTP proxy (deprecated, not supported by most accounts)",
+          "notes": [
+            "Most Thordata proxy servers reject HTTP connections",
+            "Use HTTPS or SOCKS5 instead",
+            "curl test typically results in 'Empty reply from server'"
+          ],
+          "status": "deprecated",
+          "support_level": "Legacy only"
+        },
+        "https": {
+          "curl_example": "curl -x \"https://user:pass@host:9999\" \"https://ipinfo.thordata.com\"",
+          "description": "HTTPS proxy (TLS encrypted connection to proxy)",
+          "implementation_notes": [
+            "Requires TLS handshake with proxy server",
+            "For HTTPS target: requires TLS-in-TLS (nested TLS)",
+            "Python: Full support via ssl.MemoryBIO",
+            "Go: Full support via custom dialer",
+            "JS/Node.js: Use https-proxy-agent"
+          ],
+          "required_by": "Most Thordata accounts",
+          "security": "TLS encryption between client and proxy"
+        },
+        "socks5h": {
+          "advantages": [
+            "Better privacy (DNS queries via proxy)",
+            "Simpler implementation than HTTPS",
+            "No nested TLS issues"
+          ],
+          "curl_example": "curl -x \"socks5h://user:pass@host:9999\" \"https://ipinfo.thordata.com\"",
+          "description": "SOCKS5 proxy with remote DNS resolution",
+          "implementation_notes": [
+            "Use 'socks5h' scheme (not 'socks5') for remote DNS",
+            "Supports both IPv4 and IPv6",
+            "Python: Use PySocks or urllib3[socks]",
+            "Go: Use golang.org/x/net/proxy",
+            "JS/Node.js: Use socks-proxy-agent"
+          ]
+        }
+      }
+    },
+    "upstreamProxySupport": {
+      "common_tools": {
+        "clash_verge": {
+          "default_ports": {
+            "http": 7897,
+            "socks5": 7897
+          },
+          "env_setting": "THORDATA_UPSTREAM_PROXY=socks5://127.0.0.1:7897",
+          "recommended_mode": "TUN mode (captures all traffic)"
+        },
+        "shadowsocks": {
+          "default_ports": {
+            "socks5": 1080
+          },
+          "env_setting": "THORDATA_UPSTREAM_PROXY=socks5://127.0.0.1:1080"
+        },
+        "v2ray": {
+          "default_ports": {
+            "http": 1087,
+            "socks5": 1080
+          },
+          "env_setting": "THORDATA_UPSTREAM_PROXY=socks5://127.0.0.1:1080"
+        }
+      },
+      "description": "SDK support for proxy chaining to access Thordata from restricted networks",
+      "environment_variable": "THORDATA_UPSTREAM_PROXY",
+      "implementation_status": {
+        "go": {
+          "features": [
+            "SOCKS5 and HTTP upstream support",
+            "Custom dialer chain"
+          ],
+          "implementation": "golang.org/x/net/proxy with custom dial",
+          "notes": "Test coverage may be limited",
+          "status": "✅ Full support"
+        },
+        "javascript": {
+          "features": [
+            "Detection and logging of upstream proxy",
+            "Works with system proxy or TUN mode"
+          ],
+          "limitations": [
+            "Full proxy chaining is complex in Node.js",
+            "Recommends using Clash TUN mode"
+          ],
+          "recommendation": "Set Clash to TUN mode or system proxy",
+          "status": "⚠️ Partial support"
+        },
+        "python": {
+          "features": [
+            "TLS-in-TLS for HTTPS proxy + HTTPS target",
+            "SOCKS5 upstream -> HTTPS/SOCKS5 Thordata proxy",
+            "HTTP upstream -> HTTPS/SOCKS5 Thordata proxy"
+          ],
+          "implementation": "Custom socket factory with ssl.MemoryBIO",
+          "status": "✅ Full support"
+        }
+      },
+      "supported_upstream_protocols": [
+        {
+          "notes": "Best compatibility with Clash, V2Ray, Shadowsocks",
+          "protocol": "socks5",
+          "recommended": true
+        },
+        {
+          "notes": "Remote DNS resolution (more private)",
+          "protocol": "socks5h",
+          "recommended": true
+        },
+        {
+          "notes": "Basic HTTP CONNECT tunnel",
+          "protocol": "http",
+          "recommended": false
+        },
+        {
+          "notes": "TLS to upstream proxy (complex implementation)",
+          "protocol": "https",
+          "recommended": false
+        }
+      ],
+      "use_cases": {
+        "corporate_firewall": {
+          "description": "Corporate networks blocking direct proxy connections",
+          "solution": "Route through corporate proxy or VPN"
+        },
+        "mainland_china": {
+          "description": "Users behind GFW need local proxy (Clash, V2Ray) to access Thordata",
+          "example": "THORDATA_UPSTREAM_PROXY=socks5://127.0.0.1:7897",
+          "solution": "Set THORDATA_UPSTREAM_PROXY to local proxy address"
+        },
+        "multi_hop_privacy": {
+          "description": "Users requiring additional anonymity layer",
+          "solution": "Chain through personal VPN before Thordata"
+        }
       }
     },
     "usernameSegments": {
+      "examples": {
+        "basic": "td-customer-myaccount",
+        "with_city": "td-customer-myaccount-country-us-city-seattle",
+        "with_country": "td-customer-myaccount-country-us",
+        "with_session": "td-customer-myaccount-country-us-sessid-abc123-sesstime-10"
+      },
       "keys": {
         "asn": "asn",
         "city": "city",
