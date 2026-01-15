@@ -131,7 +131,7 @@
       },
       "scraperToken": {
         "envVar": "THORDATA_SCRAPER_TOKEN",
-        "required": true,
+        "required": false,
         "source": "Dashboard -> Account Settings",
         "usedBy": [
           "serp",
