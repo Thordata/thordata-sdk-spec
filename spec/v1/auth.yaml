@@ -6,7 +6,7 @@ credentials:
   scraperToken:
     envVar: "THORDATA_SCRAPER_TOKEN"
     source: "Dashboard -> Account Settings"
-    required: true
+    required: false
     usedBy: ["serp", "universal", "builder"]
 
   publicToken:
