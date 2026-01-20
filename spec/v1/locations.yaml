@@ -1,0 +1,40 @@
+# spec/v1/locations.yaml
+# Locations API endpoints
+
+auth:
+  method: "query params"
+  params:
+    - token
+    - key
+
+countries:
+  endpoint: "/countries"
+  baseUrl: "https://openapi.thordata.com/api/locations"
+  method: "GET"
+  params:
+    - proxy_type
+
+states:
+  endpoint: "/states"
+  baseUrl: "https://openapi.thordata.com/api/locations"
+  method: "GET"
+  params:
+    - proxy_type
+    - country_code
+
+cities:
+  endpoint: "/cities"
+  baseUrl: "https://openapi.thordata.com/api/locations"
+  method: "GET"
+  params:
+    - proxy_type
+    - country_code
+    - state_code
+
+asn:
+  endpoint: "/asn"
+  baseUrl: "https://openapi.thordata.com/api/locations"
+  method: "GET"
+  params:
+    - proxy_type
+    - country_code

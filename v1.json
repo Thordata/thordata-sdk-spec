@@ -436,6 +436,86 @@
       504
     ]
   },
+  "extract": {
+    "residential": {
+      "baseUrl": "https://get-ip.thordata.net",
+      "endpoint": "/api",
+      "method": "GET",
+      "params": [
+        "num",
+        "country",
+        "state",
+        "city",
+        "time",
+        "port",
+        "return_type",
+        "protocol",
+        "sep",
+        "td-customer"
+      ]
+    },
+    "unlimited": {
+      "baseUrl": "https://get-ip.thordata.net",
+      "endpoint": "/unlimited_api",
+      "method": "GET",
+      "params": [
+        "num",
+        "country",
+        "time",
+        "port",
+        "return_type",
+        "protocol",
+        "sep",
+        "td-customer",
+        "servers"
+      ]
+    }
+  },
+  "locations": {
+    "asn": {
+      "baseUrl": "https://openapi.thordata.com/api/locations",
+      "endpoint": "/asn",
+      "method": "GET",
+      "params": [
+        "proxy_type",
+        "country_code"
+      ]
+    },
+    "auth": {
+      "method": "query params",
+      "params": [
+        "token",
+        "key"
+      ]
+    },
+    "cities": {
+      "baseUrl": "https://openapi.thordata.com/api/locations",
+      "endpoint": "/cities",
+      "method": "GET",
+      "params": [
+        "proxy_type",
+        "country_code",
+        "state_code"
+      ]
+    },
+    "countries": {
+      "baseUrl": "https://openapi.thordata.com/api/locations",
+      "endpoint": "/countries",
+      "method": "GET",
+      "params": [
+        "proxy_type"
+      ]
+    },
+    "states": {
+      "baseUrl": "https://openapi.thordata.com/api/locations",
+      "endpoint": "/states",
+      "method": "GET",
+      "params": [
+        "proxy_type",
+        "country_code"
+      ]
+    }
+  },
   "network": {
     "apiTraffic": {
       "notes": [
@@ -734,6 +814,38 @@
     }
   },
   "publicApi": {
+    "accountBalance": {
+      "traffic": {
+        "baseUrl": "https://openapi.thordata.com/api",
+        "endpoint": "/account/traffic-balance",
+        "method": "GET",
+        "params": [
+          "token",
+          "key"
+        ],
+        "responseFields": {
+          "traffic_balance": {
+            "type": "number",
+            "unit": "KB"
+          }
+        }
+      },
+      "wallet": {
+        "baseUrl": "https://openapi.thordata.com/api",
+        "endpoint": "/account/wallet-balance",
+        "method": "GET",
+        "params": [
+          "token",
+          "key"
+        ],
+        "responseFields": {
+          "balance": {
+            "type": "number",
+            "unit": "USD"
+          }
+        }
+      }
+    },
     "auth": {
       "headers": {
         "key": "publicKey",

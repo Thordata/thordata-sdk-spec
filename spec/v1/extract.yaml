@@ -1,0 +1,33 @@
+# spec/v1/extract.yaml
+# API Extract Links (get-ip.thordata.net)
+
+residential:
+  endpoint: "/api"
+  baseUrl: "https://get-ip.thordata.net"
+  method: "GET"
+  params:
+    - num # number
+    - country
+    - state
+    - city
+    - time # 1-90, duration
+    - port
+    - return_type # txt/json
+    - protocol # http/socks5
+    - sep # separator
+    - td-customer # username
+
+unlimited:
+  endpoint: "/unlimited_api"
+  baseUrl: "https://get-ip.thordata.net"
+  method: "GET"
+  params:
+    - num
+    - country
+    - time
+    - port
+    - return_type
+    - protocol
+    - sep
+    - td-customer
+    - servers # specific to unlimited

@@ -6,6 +6,36 @@ auth:
     token: "publicToken"
     key: "publicKey"
 
+# ========================================
+# Account Management
+# ========================================
+
+# Account Balance (Added)
+accountBalance:
+  traffic:
+    endpoint: "/account/traffic-balance"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+    responseFields:
+      traffic_balance:
+        type: "number"
+        unit: "KB"
+
+  wallet:
+    endpoint: "/account/wallet-balance"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+    responseFields:
+      balance:
+        type: "number"
+        unit: "USD"
+
 # Account usage statistics
 usageStatistics:
   endpoint: "/account/usage-statistics"
@@ -32,7 +62,12 @@ usageStatistics:
       type: "array"
       description: "Daily usage breakdown"
 
-# Proxy user management
+
+# ========================================
+# Proxy User Management
+# Residential & Unlimited proxy user CRUD operations
+# ========================================
+
 proxyUsers:
   list:
     endpoint: "/proxy-users/user-list"
@@ -137,7 +172,12 @@ proxyUsers:
       - from_date
       - to_date
 
-# Whitelist IP management
+
+# ========================================
+# IP Whitelist Management
+# Control which IPs can access your proxies
+# ========================================
+
 whitelist:
   list:
     endpoint: "/whitelisted-ips/ip-list"
@@ -173,6 +213,12 @@ whitelist:
       ip:
         type: "string"
         required: true
+
+
+# ========================================
+# Proxy Information
+# ISP and Datacenter proxy list and expiration
+# ========================================
 
 # ISP/Datacenter proxy list
 proxyList:
