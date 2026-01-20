@@ -84,8 +84,70 @@ proxyUsers:
         type: "string"
         enum: ["true", "false"]
 
+  update:
+    endpoint: "/proxy-users/update-user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      proxy_type:
+        type: "integer"
+        required: true
+      username:
+        type: "string"
+        required: true
+      traffic_limit:
+        type: "integer"
+      status:
+        type: "string"
+        enum: ["true", "false"]
+
+  delete:
+    endpoint: "/proxy-users/delete-user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      proxy_type:
+        type: "integer"
+        required: true
+      username:
+        type: "string"
+        required: true
+
+  usage:
+    endpoint: "/proxy-users/usage-statistics"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+      - proxy_type
+      - username
+      - from_date
+      - to_date
+
+  usageHour:
+    endpoint: "/proxy-users/usage-statistics-hour"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+      - proxy_type
+      - username
+      - from_date
+      - to_date
+
 # Whitelist IP management
 whitelist:
+  list:
+    endpoint: "/whitelisted-ips/ip-list"
+    baseUrl: "https://api.thordata.com/api"
+    method: "GET"
+    params:
+      - token
+      - key
+      - proxy_type
+
   addIp:
     endpoint: "/whitelisted-ips/add-ip"
     baseUrl: "https://api.thordata.com/api"
@@ -100,6 +162,17 @@ whitelist:
       status:
         type: "string"
         enum: ["true", "false"]
+
+  deleteIp:
+    endpoint: "/whitelisted-ips/delete-ip"
+    baseUrl: "https://api.thordata.com/api"
+    method: "POST"
+    requestFields:
+      proxy_type:
+        type: "integer"
+      ip:
+        type: "string"
+        required: true
 
 # ISP/Datacenter proxy list
 proxyList:

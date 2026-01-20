@@ -41,6 +41,7 @@ def main() -> None:
         ("universal", "universal.yaml"),
         ("tasks", "tasks.yaml"),
         ("publicApi", "public_api.yaml"),
+        ("unlimited", "unlimited.yaml"),
         ("errors", "errors.yaml"),
         ("network", "network.yaml"),
         ("locations", "locations.yaml"),

@@ -1,0 +1,108 @@
+# spec/v1/unlimited.yaml
+# Unlimited Residential Proxy management
+
+auth:
+  headers:
+    token: "publicToken"
+    key: "publicKey"
+
+serverList:
+  endpoint: "/unlimited/server-list"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "GET"
+  params:
+    - token
+    - key
+
+restart:
+  endpoint: "/unlimited/restart-server"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "POST"
+  requestFields:
+    plan_name:
+      type: "string"
+      required: true
+
+renew:
+  endpoint: "/unlimited/renew"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "POST"
+  requestFields:
+    plan_name:
+      type: "string"
+      required: true
+    month:
+      type: "integer"
+      required: true
+
+upgrade:
+  endpoint: "/unlimited/upgrade"
+  baseUrl: "https://openapi.thordata.com/api"
+  method: "POST"
+  requestFields:
+    plan_name:
+      type: "string"
+      required: true
+    target_plan:
+      type: "string"
+      required: true
+
+serverMonitor:
+  endpoint: "/unlimited/server-monitor"
+  baseUrl: "https://api.thordata.com/api"
+  method: "GET" # Note: Docs use GET with Body, but typically GET params are safer in SDKs
+  params:
+    - token
+    - key
+    - ins_id
+    - start_time
+    - end_time
+    - period
+
+balancingMonitor:
+  endpoint: "/unlimited/balancing-monitor"
+  baseUrl: "https://api.thordata.com/api"
+  method: "GET"
+  params:
+    - token
+    - key
+    - ins_id
+    - region
+    - start_time
+    - end_time
+    - period
+
+bindUser:
+  list:
+    endpoint: "/get_unlimited_servers_bind_user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      ip:
+        type: "string"
+        required: true
+        description: "Domain or IP of unlimited proxy server"
+
+  add:
+    endpoint: "/add_unlimited_servers_bind_user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      ip:
+        type: "string"
+        required: true
+      username:
+        type: "string"
+        required: true
+
+  delete:
+    endpoint: "/del_unlimited_servers_bind_user"
+    baseUrl: "https://openapi.thordata.com/api"
+    method: "POST"
+    requestFields:
+      ip:
+        type: "string"
+        required: true
+      username:
+        type: "string"
+        required: true
