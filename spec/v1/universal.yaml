@@ -1,6 +1,89 @@
-# FILE: thordata-sdk-spec/spec/v1/universal.yaml
+# spec/v1/universal.yaml
+# Web Unlocker (Universal Scraping API) conventions (SDK-aligned)
 
-# Universal API settings and cross-SDK standards
+# Branding
+# - "Web Unlocker" is the Dashboard product name.
+# - Historically the same service was referred to as "Universal API".
+# - Both hosts are equivalent:
+#   - https://webunlocker.thordata.com (new)
+#   - https://universalapi.thordata.com (legacy)
+
+endpoint:
+  # Prefer the new branding base URL in spec.
+  baseUrlRef: "webunlocker"
+  path: "/request"
+  method: "POST"
+  auth:
+    mode: "bearer"
+    headers:
+      AuthorizationBearer: "scraperToken"
+
+request:
+  contentType: "application/x-www-form-urlencoded"
+  fields:
+    url:
+      type: "string"
+      required: true
+      description: "Target URL to scrape"
+
+    js_render:
+      type: "string"
+      enum: ["True", "False"]
+      default: "False"
+      description: "Enable JavaScript rendering"
+
+    type:
+      type: "string"
+      enum: ["html", "png"]
+      default: "html"
+      description: "Output format"
+
+    country:
+      type: "string"
+      required: false
+      description: "Proxy country code (e.g., us, de)"
+
+    block_resources:
+      type: "string"
+      required: false
+      description: "Comma-separated resource types to block (e.g., image,script,css)"
+
+    clean_content:
+      type: "string"
+      required: false
+      description: "Comma-separated content types to remove (e.g., js,css)"
+
+    wait:
+      type: "string"
+      required: false
+      description: "Wait time in milliseconds (0-100000)"
+
+    wait_for:
+      type: "string"
+      required: false
+      description: "CSS selector to wait for"
+
+    headers:
+      type: "string"
+      required: false
+      description: "JSON string of headers list (SDK serializes list[dict] via json.dumps)"
+      example: '[{"name":"User-Agent","value":"Mozilla/5.0"}]'
+
+    cookies:
+      type: "string"
+      required: false
+      description: "JSON string of cookies list (SDK serializes list[dict] via json.dumps)"
+      example: '[{"name":"session","value":"abc"}]'
+
+response:
+  successCodes: [200]
+  output:
+    html:
+      contentType: "text/html"
+      type: "string"
+    png:
+      contentType: "image/png"
+      type: "bytes"
 
 userAgent:
   format: "thordata-{lang}-sdk/{version} {runtime}/{runtime_version} ({os_info})"

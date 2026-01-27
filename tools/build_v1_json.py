@@ -46,6 +46,7 @@ def main() -> None:
         ("errors", "errors.yaml"),
         ("network", "network.yaml"),
         ("locations", "locations.yaml"),
+        ("sdkScopes", "sdk_scopes.yaml"),
     ]:
         data = load_yaml(v1_dir / filename)
         if data is None:

@@ -1,10 +1,17 @@
 # spec/v1/tasks.yaml
-# Web Scraper API task definitions
+# Web Scraper Tasks API (SDK-aligned)
 
-# Text-based scraping task (existing)
+# IMPORTANT
+# - Task creation uses scraperapi base URL (/builder, /video_builder)
+# - Task status/list/download use webScraperApi base URL (/tasks-status, /tasks-list, /tasks-download)
+# - Authentication (Python SDK):
+#   - builder/video_builder: Bearer scraperToken + publicToken/publicKey headers
+#   - status/list/download: publicToken/publicKey headers
+
+# Text-based scraping task
 builder:
   endpoint: "/builder"
-  baseUrl: "https://scraperapi.thordata.com"
+  baseUrlRef: "scraperapi"
   method: "POST"
   auth:
     headers:
@@ -19,10 +26,10 @@ builder:
     - spider_errors
     - spider_universal
 
-# YouTube video/audio download task
+# Video download task
 videoBuilder:
   endpoint: "/video_builder"
-  baseUrl: "https://scraperapi.thordata.com"
+  baseUrlRef: "scraperapi"
   method: "POST"
   auth:
     headers:
@@ -41,27 +48,24 @@ videoBuilder:
     fields:
       resolution:
         type: "string"
-        enum: ["360p", "480p", "720p", "1080p", "1440p", "2160p"]
-        description: "Video resolution (optional, auto-downgrades if unavailable)"
+        description: "Video resolution selector (SDK commonly uses expressions like '<=360p')"
+      video_codec:
+        type: "string"
+        description: "Video codec selector (e.g., vp9, h264)"
       audio_format:
         type: "string"
-        enum: ["opus", "mp3"]
-        description: "Audio format (required for audio spider)"
+        description: "Audio format selector (e.g., opus, mp3, aac)"
       bitrate:
         type: "string"
-        description: "Audio bitrate (48/64/128/160/256/320 or with Kbps suffix)"
-      is_subtitles:
-        type: "string"
-        enum: ["true", "false"]
-        description: "Download subtitles (required)"
-      subtitles_language:
-        type: "string"
-        description: "Subtitle language code (e.g., 'en', 'zh-Hans')"
+        description: "Audio bitrate selector (e.g., '<=320')"
+      selected_only:
+        type: "boolean"
+        description: "If true, only download selected streams"
 
-# Task list query
+# Task list
 list:
   endpoint: "/tasks-list"
-  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  baseUrlRef: "webScraperApi"
   method: "POST"
   auth:
     headers:
@@ -74,10 +78,10 @@ list:
     - count
     - list
 
-# Task status query
+# Task status
 status:
   endpoint: "/tasks-status"
-  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  baseUrlRef: "webScraperApi"
   method: "POST"
   auth:
     headers:
@@ -89,7 +93,7 @@ status:
 # Task download
 download:
   endpoint: "/tasks-download"
-  baseUrl: "https://openapi.thordata.com/api/web-scraper-api"
+  baseUrlRef: "webScraperApi"
   method: "POST"
   auth:
     headers:

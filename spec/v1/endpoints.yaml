@@ -1,16 +1,29 @@
+# spec/v1/endpoints.yaml
+# High-level endpoint path conventions (SDK-aligned)
+
 serp:
   requestPath: "/request"
   builderPath: "/builder"
+  videoBuilderPath: "/video_builder"
 
-universal:
+webunlocker:
   requestPath: "/request"
 
 webScraper:
   statusPath: "/tasks-status"
   downloadPath: "/tasks-download"
+  listPath: "/tasks-list"
 
 locations:
   countriesPath: "/countries"
   statesPath: "/states"
   citiesPath: "/cities"
   asnPath: "/asn"
+
+proxyExtract:
+  baseUrl: "https://get-ip.thordata.net"
+  residentialPath: "/api"
+  unlimitedPath: "/unlimited_api"
+  method: "GET"
+  notes:
+    - "Python SDK uses td-customer query param when username is provided"

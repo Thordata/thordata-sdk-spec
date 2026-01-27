@@ -1,6 +1,13 @@
 # spec/v1/public_api.yaml
 # Public API endpoints for account/proxy management (token + key auth)
 
+# NOTE: All baseUrl values below are aligned with the Python SDK implementation.
+# The Python SDK uses these env-controlled bases:
+# - THORDATA_LOCATIONS_BASE_URL (default: https://openapi.thordata.com/api/locations)
+#   -> shared base inferred by removing '/locations' suffix
+# - THORDATA_WHITELIST_BASE_URL (default: https://openapi.thordata.com/api)
+# - THORDATA_PROXY_API_BASE_URL (default: https://openapi.thordata.com/api)
+
 auth:
   headers:
     token: "publicToken"
@@ -10,7 +17,7 @@ auth:
 # Account Management
 # ========================================
 
-# Account Balance (Added)
+# Account Balance
 accountBalance:
   traffic:
     endpoint: "/account/traffic-balance"
@@ -181,7 +188,7 @@ proxyUsers:
 whitelist:
   list:
     endpoint: "/whitelisted-ips/ip-list"
-    baseUrl: "https://api.thordata.com/api"
+    baseUrl: "https://openapi.thordata.com/api"
     method: "GET"
     params:
       - token
@@ -190,7 +197,7 @@ whitelist:
 
   addIp:
     endpoint: "/whitelisted-ips/add-ip"
-    baseUrl: "https://api.thordata.com/api"
+    baseUrl: "https://openapi.thordata.com/api"
     method: "POST"
     requestFields:
       proxy_type:
@@ -205,7 +212,7 @@ whitelist:
 
   deleteIp:
     endpoint: "/whitelisted-ips/delete-ip"
-    baseUrl: "https://api.thordata.com/api"
+    baseUrl: "https://openapi.thordata.com/api"
     method: "POST"
     requestFields:
       proxy_type:
@@ -220,7 +227,6 @@ whitelist:
 # ISP and Datacenter proxy list and expiration
 # ========================================
 
-# ISP/Datacenter proxy list
 proxyList:
   endpoint: "/proxy/proxy-list"
   baseUrl: "https://openapi.thordata.com/api"
@@ -239,7 +245,6 @@ proxyList:
     - password
     - expiration_time
 
-# Proxy expiration time
 proxyExpiration:
   endpoint: "/proxy/expiration-time"
   baseUrl: "https://openapi.thordata.com/api"

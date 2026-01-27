@@ -1,7 +1,12 @@
 # spec/v1/serp.yaml
+# SERP API conventions (SDK-aligned)
+
 engines:
   aliases:
     google_search: google
+    google_web: google
+    google_local: google
+    google_product: google_product
     bing_search: bing
     yandex_search: yandex
     duckduckgo_search: duckduckgo
@@ -15,18 +20,25 @@ request:
     start:  { type: "string" }
     gl:     { type: "string" }
     hl:     { type: "string" }
-    json:   { type: "string", enum: ["0", "1"], meaning: "1=json,0=html" }
+    json:   { type: "string", enum: ["0", "1", "2"], meaning: "1=json,0=html,2=both" }
     tbm:    { type: "string" }
     tbs:    { type: "string" }
     render_js: { type: "string", enum: ["True", "False"] }
     no_cache:  { type: "string", enum: ["True", "False"] }
 
 mappings:
+  # Must match SerpRequest.SEARCH_TYPE_MAP in the Python SDK
   searchTypeToTbm:
     images: "isch"
     shopping: "shop"
     news: "nws"
     videos: "vid"
+    isch: "isch"
+    shop: "shop"
+    nws: "nws"
+    vid: "vid"
+
+  # Must match SerpRequest.TIME_FILTER_MAP in the Python SDK
   timeFilterToTbs:
     hour: "qdr:h"
     day: "qdr:d"

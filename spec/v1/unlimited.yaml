@@ -1,14 +1,25 @@
 # spec/v1/unlimited.yaml
-# Unlimited Residential Proxy management
+# Unlimited Residential Proxy management (SDK-aligned)
+
+# Python SDK reference:
+# - thordata.unlimited.UnlimitedNamespace
+# - Base URL derived from THORDATA_LOCATIONS_BASE_URL by removing '/locations'
+#   default: https://openapi.thordata.com/api
 
 auth:
   headers:
     token: "publicToken"
     key: "publicKey"
 
+baseUrl:
+  derivedFrom:
+    baseUrlRef: "locations"
+    rule: "remove_suffix:/locations"
+    example: "https://openapi.thordata.com/api"
+
 serverList:
   endpoint: "/unlimited/server-list"
-  baseUrl: "https://openapi.thordata.com/api"
+  baseUrlRefDerived: true
   method: "GET"
   params:
     - token
@@ -16,7 +27,7 @@ serverList:
 
 restart:
   endpoint: "/unlimited/restart-server"
-  baseUrl: "https://openapi.thordata.com/api"
+  baseUrlRefDerived: true
   method: "POST"
   requestFields:
     plan_name:
@@ -25,7 +36,7 @@ restart:
 
 renew:
   endpoint: "/unlimited/renew"
-  baseUrl: "https://openapi.thordata.com/api"
+  baseUrlRefDerived: true
   method: "POST"
   requestFields:
     plan_name:
@@ -37,7 +48,7 @@ renew:
 
 upgrade:
   endpoint: "/unlimited/upgrade"
-  baseUrl: "https://openapi.thordata.com/api"
+  baseUrlRefDerived: true
   method: "POST"
   requestFields:
     plan_name:
@@ -49,19 +60,7 @@ upgrade:
 
 serverMonitor:
   endpoint: "/unlimited/server-monitor"
-  baseUrl: "https://api.thordata.com/api"
-  method: "GET" # Note: Docs use GET with Body, but typically GET params are safer in SDKs
-  params:
-    - token
-    - key
-    - ins_id
-    - start_time
-    - end_time
-    - period
-
-balancingMonitor:
-  endpoint: "/unlimited/balancing-monitor"
-  baseUrl: "https://api.thordata.com/api"
+  baseUrlRefDerived: true
   method: "GET"
   params:
     - token
@@ -71,11 +70,29 @@ balancingMonitor:
     - start_time
     - end_time
     - period
+  responseNotes:
+    - "Python SDK expects data.code == 200 and returns data.data"
+
+balancingMonitor:
+  endpoint: "/unlimited/balancing-monitor"
+  baseUrlRefDerived: true
+  method: "GET"
+  params:
+    - token
+    - key
+    - ins_id
+    - region
+    - start_time
+    - end_time
+    - period
+  responseNotes:
+    - "Python SDK notes this endpoint may use status_code instead of code"
+    - "Python SDK returns payload field if present"
 
 bindUser:
   list:
     endpoint: "/get_unlimited_servers_bind_user"
-    baseUrl: "https://openapi.thordata.com/api"
+    baseUrlRefDerived: true
     method: "POST"
     requestFields:
       ip:
@@ -85,7 +102,7 @@ bindUser:
 
   add:
     endpoint: "/add_unlimited_servers_bind_user"
-    baseUrl: "https://openapi.thordata.com/api"
+    baseUrlRefDerived: true
     method: "POST"
     requestFields:
       ip:
@@ -97,7 +114,7 @@ bindUser:
 
   delete:
     endpoint: "/del_unlimited_servers_bind_user"
-    baseUrl: "https://openapi.thordata.com/api"
+    baseUrlRefDerived: true
     method: "POST"
     requestFields:
       ip:

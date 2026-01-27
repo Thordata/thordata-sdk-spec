@@ -1,41 +1,50 @@
 # spec/v1/auth.yaml
 # Authentication modes and credential requirements for all Thordata APIs
+# SDK-aligned (Python is the reference implementation)
 
-# Token/credential sources
 credentials:
   scraperToken:
     envVar: "THORDATA_SCRAPER_TOKEN"
-    source: "Dashboard -> Account Settings"
+    source: "Dashboard"
     required: false
-    usedBy: ["serp", "universal", "builder"]
+    usedBy: ["serp", "webunlocker", "builder", "videoBuilder"]
 
   publicToken:
     envVar: "THORDATA_PUBLIC_TOKEN"
-    source: "Dashboard -> My Account"
+    source: "Dashboard"
     required: false
     usedBy: ["publicApi", "locations", "tasks"]
 
   publicKey:
     envVar: "THORDATA_PUBLIC_KEY"
-    source: "Dashboard -> My Account"
+    source: "Dashboard"
     required: false
     usedBy: ["publicApi", "locations", "tasks"]
 
-# Authentication modes for SERP/Universal
-serpUniversalAuth:
+  browserUsername:
+    envVar: "THORDATA_BROWSER_USERNAME"
+    source: "Dashboard"
+    required: false
+    usedBy: ["browser"]
+
+  browserPassword:
+    envVar: "THORDATA_BROWSER_PASSWORD"
+    source: "Dashboard"
+    required: false
+    usedBy: ["browser"]
+
+# Authentication modes for SERP / Web Unlocker
+serpWebunlockerAuth:
   modes:
     bearer:
       header: "Authorization"
       format: "Bearer {scraperToken}"
-      documentation: "Thordata Docs examples"
       default: true
     headerToken:
       header: "token"
       format: "{scraperToken}"
-      documentation: "Interface documentation"
       default: false
 
-# API family authentication requirements
 apiAuth:
   serp:
     required: ["scraperToken"]
@@ -44,7 +53,7 @@ apiAuth:
       bearer: { Authorization: "Bearer {scraperToken}" }
       headerToken: { token: "{scraperToken}" }
 
-  universal:
+  webunlocker:
     required: ["scraperToken"]
     mode: "bearer or headerToken"
     headers:
@@ -53,7 +62,7 @@ apiAuth:
 
   builder:
     required: ["scraperToken", "publicToken", "publicKey"]
-    note: "Requires ALL THREE headers"
+    note: "Requires all three headers"
     headers:
       token: "{publicToken}"
       key: "{publicKey}"
@@ -87,33 +96,40 @@ apiAuth:
 
   locations:
     required: ["publicToken", "publicKey"]
-    method: "query params"
-    params:
+    headers:
       token: "{publicToken}"
       key: "{publicKey}"
 
   publicApi:
     required: ["publicToken", "publicKey"]
-    note: "Account management, proxy users, whitelist"
     headers:
       token: "{publicToken}"
       key: "{publicKey}"
+
+  browser:
+    required: ["browserUsername", "browserPassword"]
+    notes:
+      - "Used to build remote browser connection URLs."
+      - "Python SDK applies 'td-customer-' prefix and URL-encodes credentials."
 
 # Decision tree for SDK implementers
 decisionTree:
   question: "Which API are you calling?"
   answers:
-    "SERP or Universal":
-      useCredential: "scraperToken"
+    "SERP":
+      useCredential: ["scraperToken"]
+      authMode: "bearer (default) or headerToken"
+    "Web Unlocker":
+      useCredential: ["scraperToken"]
       authMode: "bearer (default) or headerToken"
     "Web Scraper builder/video_builder":
       useCredential: ["scraperToken", "publicToken", "publicKey"]
       note: "Need all three"
     "Task status/download/list":
       useCredential: ["publicToken", "publicKey"]
-    "Locations API":
+    "Locations":
       useCredential: ["publicToken", "publicKey"]
-      method: "query params"
-    "Account management (usage, users, whitelist, proxy list)":
+    "Public API (usage, users, whitelist, proxy list)":
       useCredential: ["publicToken", "publicKey"]
-
+    "Browser":
+      useCredential: ["browserUsername", "browserPassword"]

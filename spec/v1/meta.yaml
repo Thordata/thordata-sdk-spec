@@ -1,4 +1,15 @@
 version: 1
 name: thordata-sdk-spec
 status: stable
-lastUpdated: "2025-12-23"
+lastUpdated: "2026-01-27"
+
+compatibility:
+  referenceSdk:
+    language: python
+    package: thordata-sdk
+    minVersion: "1.6.0"
+
+notes:
+  - "Canonical artifact is v1.json generated from spec/v1/*.yaml."
+  - "This spec is used across Python/Node.js/Go/Java SDKs; Python SDK is the reference implementation."
+  - "Web Unlocker host webunlocker.thordata.com is the preferred branding host; universalapi.thordata.com is supported as an alias."

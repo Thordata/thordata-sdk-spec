@@ -1,12 +1,48 @@
+# spec/v1/network.yaml
+# Cross-SDK networking conventions (Python SDK is the reference implementation)
+
 apiTraffic:
   trustEnv: true
   notes:
     - "API calls may respect HTTP(S)_PROXY environment variables for users behind local proxies."
+    - "Python SDK: requests.Session for API calls follows trust_env behavior unless disabled explicitly."
 
 proxyGatewayTraffic:
   trustEnv: false
   notes:
-    - "Proxy gateway traffic may bypass environment proxies by design to avoid routing API calls through the proxy gateway."
+    - "Proxy gateway traffic should not inherit system proxy env by default to avoid feedback loops."
+    - "Python SDK: proxy network session sets trust_env = False."
+
+upstreamProxy:
+  env: "THORDATA_UPSTREAM_PROXY"
+  purpose: "Proxy chaining for restricted networks"
+  supportedProtocols: ["socks5", "socks5h", "http", "https"]
+  notes:
+    - "Python SDK supports upstream proxy chaining for API and proxy gateway traffic."
+
+httpsProxyTlsInTls:
+  requiredFor:
+    - "HTTPS proxy protocol" 
+    - "HTTPS target URLs"
+  description: "Nested TLS (TLS to proxy + TLS to target)"
+  python:
+    status: "supported"
+    implementation: "ssl.MemoryBIO / custom tunnel implementation"
+  go:
+    status: "recommended"
+    implementation: "custom dialer + tls.Config (implementation-specific)"
+  node:
+    status: "recommended"
+    implementation: "agent-based (e.g., https-proxy-agent)"
+  java:
+    status: "optional"
+    implementation: "custom SSLSocketFactory / proxy selector (advanced)"
+
+socks5hRemoteDns:
+  description: "SOCKS5 with remote DNS resolution"
+  notes:
+    - "Prefer socks5h over socks5 to avoid local DNS leaks."
 
 chinaNotes:
-  - "In restricted networks, prefer system-level tunneling (e.g., TUN mode) or routing that allows reaching Thordata gateway hosts."
+  - "In restricted networks, prefer system-level tunneling (TUN mode) or set THORDATA_UPSTREAM_PROXY to a local proxy."
+  - "If proxy chaining is unstable in Node/Java, recommend using system proxy or TUN mode."

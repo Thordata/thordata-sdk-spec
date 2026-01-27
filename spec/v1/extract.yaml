@@ -1,33 +1,86 @@
 # spec/v1/extract.yaml
-# API Extract Links (get-ip.thordata.net)
+# IP Extraction API (get-ip.thordata.net) conventions (SDK-aligned)
+
+# Python SDK reference:
+# - ThordataClient.extract_ip_list(...)
+# - Base URL: https://get-ip.thordata.net
+# - Residential endpoint: /api
+# - Unlimited endpoint: /unlimited_api
+
+baseUrl: "https://get-ip.thordata.net"
+
+common:
+  method: "GET"
+  queryParams:
+    num:
+      type: "string"
+      required: true
+      description: "Number of IPs to request"
+    return_type:
+      type: "string"
+      enum: ["txt", "json"]
+      default: "txt"
+      description: "Response format"
+    protocol:
+      type: "string"
+      description: "Proxy protocol hint for returned endpoints"
+      notes:
+        - "Python SDK default is 'http'"
+        - "Common values: http, https, socks5, socks5h"
+    sep:
+      type: "string"
+      default: "\\r\\n"
+      description: "Separator used for txt return_type"
+    td-customer:
+      type: "string"
+      required: false
+      description: "Optional username identifier used by the service"
+      notes:
+        - "Python SDK sets td-customer from THORDATA_RESIDENTIAL_USERNAME (or THORDATA_UNLIMITED_USERNAME for unlimited)"
+
+    country:
+      type: "string"
+      required: false
+    state:
+      type: "string"
+      required: false
+    city:
+      type: "string"
+      required: false
+
+    time:
+      type: "string"
+      required: false
+      description: "Time limit (seconds or minutes depending on backend), passed as 'time'"
+
+    port:
+      type: "string"
+      required: false
 
 residential:
   endpoint: "/api"
-  baseUrl: "https://get-ip.thordata.net"
-  method: "GET"
-  params:
-    - num # number
-    - country
-    - state
-    - city
-    - time # 1-90, duration
-    - port
-    - return_type # txt/json
-    - protocol # http/socks5
-    - sep # separator
-    - td-customer # username
+  inherits: "common"
+  notes:
+    - "Supports country/state/city filters"
 
 unlimited:
   endpoint: "/unlimited_api"
-  baseUrl: "https://get-ip.thordata.net"
-  method: "GET"
-  params:
-    - num
-    - country
-    - time
-    - port
-    - return_type
-    - protocol
-    - sep
-    - td-customer
-    - servers # specific to unlimited
+  inherits: "common"
+  notes:
+    - "Python SDK uses this endpoint when product == 'unlimited'"
+
+responses:
+  txt:
+    description: "Plain text list of host:port separated by sep"
+    example: "1.2.3.4:9999\\r\\n5.6.7.8:9999"
+
+  json:
+    description: "JSON response with code and data list"
+    successCodes: [0, 200]
+    shape:
+      code: "integer"
+      data:
+        type: "array"
+        items:
+          ip: "string"
+          port: "integer"

@@ -1,0 +1,74 @@
+# spec/v1/sdk_scopes.yaml
+# Recommended SDK scope per language (guidance)
+# This file is guidance for SDK maintainers. It is not an API contract.
+
+principles:
+  - "Spec is canonical; language SDKs may implement a subset based on ecosystem needs."
+  - "Python SDK is the reference implementation for behavioral details."
+  - "All SDKs should implement consistent auth, error precedence, and base URL env handling."
+
+languages:
+  python:
+    role: "Flagship / full coverage"
+    p0:
+      - serp
+      - webunlocker
+      - webScraperTasks
+      - proxyNetwork
+      - publicApi
+      - locations
+      - unlimited
+      - extract
+      - browserConnection
+    p1:
+      - advancedRetry
+      - highConcurrencyAsync
+    notes:
+      - "Primary SDK for scraping/AI pipelines; must cover all products."
+
+  node:
+    role: "Product integration / service SDK"
+    p0:
+      - serp
+      - webunlocker
+      - webScraperTasks
+      - publicApi
+      - locations
+    p1:
+      - browserConnection
+      - proxyNetwork
+      - unlimited
+    notes:
+      - "Prefer agent-based proxy handling; document limitations for TLS-in-TLS."
+      - "Browser users usually rely on Playwright/Puppeteer; SDK should provide connection URL helpers."
+
+  go:
+    role: "Infrastructure / high-performance networking"
+    p0:
+      - proxyNetwork
+      - publicApi
+      - locations
+      - unlimited
+      - extract
+    p1:
+      - serp
+      - webunlocker
+      - webScraperTasksLifecycle
+    notes:
+      - "Best for gateway services and high concurrency; keep APIs minimal and robust."
+
+  java:
+    role: "Enterprise integration / management"
+    p0:
+      - publicApi
+      - locations
+      - webScraperTasksLifecycle
+    p1:
+      - serp
+      - webunlocker
+    p2:
+      - proxyNetworkBasic
+      - browserConnection
+    notes:
+      - "Focus on account management and task orchestration."
+      - "Do not prioritize complex TLS-in-TLS proxy chaining; provide basic proxy URL builders only if requested."

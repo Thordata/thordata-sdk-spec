@@ -1,22 +1,24 @@
 # spec/v1/locations.yaml
-# Locations API endpoints
+# Locations API endpoints (SDK-aligned)
+
+# Base URL is controlled by THORDATA_LOCATIONS_BASE_URL
+# Default: https://openapi.thordata.com/api/locations
 
 auth:
-  method: "query params"
-  params:
-    - token
-    - key
+  headers:
+    token: "publicToken"
+    key: "publicKey"
 
 countries:
   endpoint: "/countries"
-  baseUrl: "https://openapi.thordata.com/api/locations"
+  baseUrlRef: "locations"
   method: "GET"
   params:
     - proxy_type
 
 states:
   endpoint: "/states"
-  baseUrl: "https://openapi.thordata.com/api/locations"
+  baseUrlRef: "locations"
   method: "GET"
   params:
     - proxy_type
@@ -24,7 +26,7 @@ states:
 
 cities:
   endpoint: "/cities"
-  baseUrl: "https://openapi.thordata.com/api/locations"
+  baseUrlRef: "locations"
   method: "GET"
   params:
     - proxy_type
@@ -33,7 +35,7 @@ cities:
 
 asn:
   endpoint: "/asn"
-  baseUrl: "https://openapi.thordata.com/api/locations"
+  baseUrlRef: "locations"
   method: "GET"
   params:
     - proxy_type

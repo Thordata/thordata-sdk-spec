@@ -1,48 +1,83 @@
 # spec/v1/errors.yaml
-# Error code definitions for all Thordata APIs
+# Error code definitions and precedence rules for all Thordata APIs
+# SDK-aligned (Python is the reference implementation)
 
-# Response payload structure
 payload:
   successCode: 200
   codeField: "code"
   messageFieldCandidates: ["msg", "message", "error", "detail", "description"]
 
-# Error precedence rule
 precedence:
+  # Python SDK treats payload.code as authoritative when present.
+  # If payload.code is present and not successCode, it wins over HTTP status.
   effectiveCodeRule: "payload_code_if_present_and_not_200_else_http_status"
 
-# API-specific codes (in response payload, NOT HTTP status)
 apiCodes:
+  success:
+    code: 200
+    billed: true
+    retryable: false
+    category: "success"
+
   notCollected:
     code: 300
+    billed: false
     retryable: true
-    description: "Request accepted but no data collected (not billed)"
+    category: "not_collected"
+    description: "Request accepted but no data collected (not billed)."
 
-# HTTP status code categories
 httpStatus:
-  auth: [401, 403]
-  rateLimit: [402, 429]
-  server: [500, 502, 503, 504]
-  validation: [400, 404, 422]
+  validation:
+    codes: [400, 404, 422]
+    retryable: false
+    category: "validation"
 
-# SERP API response codes
+  auth:
+    codes: [401, 403]
+    retryable: false
+    category: "auth"
+
+  rateLimit:
+    codes: [402, 429]
+    retryable: true
+    category: "rate_limit"
+    suggestedAction: "exponential_backoff"
+
+  server:
+    codes: [500, 502, 503, 504]
+    retryable: true
+    category: "server"
+    suggestedAction: "exponential_backoff"
+
+# API family code sets (payload codes and/or http status codes)
 serpCodes:
-  - 200  # Success
-  - 300  # Not collected
-  - 400  # Bad request
-  - 401  # Unauthorized
-  - 403  # Forbidden
-  - 404  # Not found
-  - 429  # Rate limit
-  - 500  # Server error
-  - 504  # Timeout
-
-# Universal API response codes
-universalCodes:
   - 200
   - 300
   - 400
   - 401
+  - 403
+  - 404
+  - 429
+  - 500
+  - 504
+
+webunlockerCodes:
+  - 200
+  - 300
+  - 400
+  - 401
+  - 403
+  - 429
+  - 500
+  - 504
+
+tasksCodes:
+  - 200
+  - 300
+  - 400
+  - 401
+  - 403
+  - 404
   - 429
   - 500
   - 504
@@ -52,12 +87,15 @@ publicApiCodes:
   10000:
     message: "Parameter error"
     retryable: false
+    category: "validation"
   10001:
     message: "Unknown error"
     retryable: false
+    category: "unknown"
   10011:
     message: "Frequent operations, please try again later"
     retryable: true
+    category: "rate_limit"
     suggestedAction: "exponential_backoff"
   10013:
     message: "public token error"
